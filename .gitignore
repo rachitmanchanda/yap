@@ -1,0 +1,23 @@
+# Xcode user state and local build products
+.DS_Store
+DerivedData/
+.build/
+build/
+*.xcuserstate
+xcuserdata/
+
+# Swift Package Manager
+.swiftpm/
+
+# Supabase local runtime state
+supabase/.branches/
+supabase/.temp/
+
+# Local configuration and secrets
+Configuration/Local.xcconfig
+*.env
+*.env.*
+!.env.example
+
+# Local screenshots captured during development
+Artifacts/

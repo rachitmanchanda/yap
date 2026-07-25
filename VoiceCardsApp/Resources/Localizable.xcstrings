@@ -1,0 +1,67 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "1 year" : {
+
+    },
+    "30 days" : {
+
+    },
+    "90 days" : {
+
+    },
+    "By continuing, you agree to the Terms and Privacy Policy." : {
+
+    },
+    "Clipboard history stays on this device. iOS may ask before Yap reads content copied in another app." : {
+
+    },
+    "Custom keyboards cannot access the microphone. Tap “Speak in Yap” to open the app, record there, then return and paste the new card." : {
+
+    },
+    "Forever" : {
+
+    },
+    "Full Access lets the keyboard read cards from the private App Group shared with Yap. The keyboard does not record audio, monitor typing, or send what you type." : {
+
+    },
+    "If iOS shows another keyboard, hold the Globe key and choose Yap again." : {
+
+    },
+    "Measured from the actual recorder, transcript, rewrite, and keyboard insertion events." : {
+
+    },
+    "Mic is on" : {
+
+    },
+    "None" : {
+
+    },
+    "Return to the app where you were typing. Yap will keep listening for up to 3 minutes." : {
+
+    },
+    "Sign in once to securely use Yap transcription and rewrite services." : {
+
+    },
+    "Swipe right along the bottom edge" : {
+
+    },
+    "Why Full Access?" : {
+
+    },
+    "Your words, ready anywhere" : {
+
+    }
+  },
+  "version" : "1.0"
+}
