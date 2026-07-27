@@ -1,6 +1,8 @@
 # YAP Hinglish Quality Harness
 
-This tool measures one product: the production YAP transcription-plus-enhancement pipeline. It is not a provider or competitor leaderboard.
+This tool selects the strongest ASR for YAP and measures the resulting production
+transcription-plus-enhancement pipeline. Provider comparisons are internal product
+evidence; manually captured keyboard baselines establish whether YAP lowers correction burden.
 
 The speech gate uses real recordings and human-written Roman Hinglish references. A dataset's native-script transcript is useful for finding clips, but it is never automatically romanized or treated as the sendable reference. Text-to-speech and generated references are prohibited.
 
@@ -29,7 +31,7 @@ The five fixture rows are deliberately unlabelled. Add real recordings and refer
 
 ```bash
 ./yap-eval validate fixtures/manifest.sample.json
-./yap-eval run fixtures/manifest.sample.json
+./yap-eval run fixtures/manifest.sample.json --provider sarvam
 ```
 
 Validation failing on empty references or absent audio is the intended safe default.
@@ -54,7 +56,7 @@ The registry records the exact URL, version, license, SHA-256 and cache path for
   --allow-unverified-license
 ```
 
-Speech manifests may be JSON or CSV. In CSV, encode `entities` and `switchIndexes` as JSON arrays such as `["Rachit","Hauz Khas"]` and `[2,5]`.
+Speech manifests may be JSON or CSV. In CSV, encode `entities` and `switchIndexes` as JSON arrays such as `["Rachit","Hauz Khas"]` and `[2,5]`. Optional `baselineGboard` and `baselineApple` columns hold manually captured dictation output for the identical clip.
 
 MUCS rows contain the original `datasetTranscript`, an English-ratio band, and an empty `reference`. For each selected clip:
 
@@ -67,17 +69,53 @@ MUCS rows contain the original `datasetTranscript`, an English-ratio band, and a
 
 The preparer balances low, medium and high English-ratio bands deterministically. The source transcript helps stratification only. MUCS consists of technical-lecture speech, so it is a useful public seed—not a substitute for the private conversational holdout.
 
-## Run production YAP
+## Run YAP by provider
 
 ```bash
 ./yap-eval validate annotation-queue-mucs-hindi-english-test.json
-./yap-eval run annotation-queue-mucs-hindi-english-test.json
+./yap-eval run private-holdout.json --provider sarvam
+./yap-eval run private-holdout.json --provider whisper
+./yap-eval run private-holdout.json --provider apple
 ```
 
 The harness sends each audio file to the same deployed endpoints and request contract as the app:
 
-1. `/functions/v1/transcribe` with `language_code=unknown` and `mode=translit`
+1. `/functions/v1/transcribe` with the selected `provider`, `language_code=unknown` and `mode=translit`
 2. `/functions/v1/rewrite` with `operation=enhance`
+
+Sarvam and Whisper route through the same Supabase transcription function used by
+the app. Missing provider fields still default to Sarvam, so the app contract remains
+backward compatible. Deploy the updated function and configure its `OPENAI` (or
+`OPENAI_API_KEY`) secret before running Whisper. The harness rejects a response whose
+provider does not match the request, rather than silently labelling Sarvam as Whisper.
+
+Apple Speech runs locally on macOS through `Speech.framework`, followed by the same
+YAP enhancement endpoint. The helper builds with Xcode on first use and macOS may ask
+for Speech Recognition permission. Because device models can differ, the manually
+captured `baselineApple` output is the authoritative Apple keyboard comparison.
+
+## Add manual Gboard and Apple baselines
+
+For each private-holdout clip, play the same real recording into the target device,
+copy the exact unedited dictation result, and populate:
+
+```json
+{
+  "baselineGboard": "kal meeting he",
+  "baselineApple": "kal meeting hai"
+}
+```
+
+No competitor keyboard is automated. Validate and score these columns independently:
+
+```bash
+./yap-eval validate private-holdout.json --mode baseline
+./yap-eval baseline private-holdout.json
+```
+
+A normal provider run automatically includes populated baseline rows in the same JSON
+and Markdown table. This keeps identical references, tokenization, correction burden,
+send-without-edit, entity accuracy and switch-boundary accuracy across every system.
 
 Running the harness uploads speech and text through YAP's production backend to its configured providers. Use only recordings you are authorized to process, and keep private holdout manifests and audio outside Git.
 
@@ -104,7 +142,15 @@ Metadata includes the manifest checksum, full Git commit, dirty-worktree flag an
 
 Normalization applies Unicode NFKC, case folding and punctuation removal. It does not translate, romanize, stem or use an LLM.
 
-Reports aggregate overall, by category, noise and source, and include deterministic diffs for the worst 20 outputs.
+The report begins with private-holdout system results, where **send without edit** and
+**correction burden** are the headline metrics. MUCS appears separately as a public
+regression appendix. Worst-20 diffs contain YAP outputs only.
+
+The ship gate is eligible only when every YAP-scored private clip has both manual
+baseline outputs for the exact same ID set. YAP passes only when its private-set
+send-without-edit rate is strictly greater than the better of Gboard and Apple
+Dictation. A tie does not pass. There is no absolute percentage gate and public MUCS
+results cannot make the private gate pass.
 
 ## Text-only enhancement regressions
 
@@ -136,6 +182,11 @@ Preserve source attribution with any derived annotations. Do not commit corpus a
 4. Run it against the deployed production endpoints.
 5. Open both report files and verify raw/final outputs, timing and diffs.
 6. Repeat the same manifest with the same commit. Output metrics should match unless the deployed backend changed.
-7. Label 100 stratified public clips and add a separate 30–50-message private conversational holdout recorded with consent.
+7. Build the private conversational holdout first, recorded with consent, and manually
+   capture both baseline columns.
+8. Expand MUCS to 100 stratified clips as a secondary regression suite.
+9. Run each provider against the unchanged manifests and compare reports by run ID and
+   Git SHA.
 
-The automated gate remains ineligible until a speech run contains at least 100 rows whose source is `mucs-openslr-104` and 30–50 rows whose source is `private-holdout`. It then requires at least 70% send-without-edit, under 8% overall correction burden and under 5% correction burden on clean audio. Public and private sets are still reported separately; the private holdout must not be tuned against.
+Do not tune against the private holdout. Add or revise pipeline behavior using separate
+development data, then use the private gate as the final product check.

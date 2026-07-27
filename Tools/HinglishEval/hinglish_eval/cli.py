@@ -13,9 +13,9 @@ from typing import Any
 
 from .backend import BackendConfiguration, YAPBackendClient, git_metadata
 from .datasets import prepare_dataset
-from .manifest import ManifestValidationError, load_manifest
-from .models import ManifestItem, PipelineResult, SUPPORTED_CATEGORIES
-from .report import build_report, score_item, write_report
+from .manifest import ManifestValidationError, load_manifest, validate_private_baselines
+from .models import ManifestItem, PipelineResult, SUPPORTED_CATEGORIES, SUPPORTED_PROVIDERS
+from .report import baseline_rows, build_report, score_item, write_report
 
 
 TOOL_ROOT = Path(__file__).resolve().parents[1]
@@ -58,11 +58,13 @@ def command_prepare(arguments: argparse.Namespace) -> int:
 def command_validate(arguments: argparse.Namespace) -> int:
     try:
         items = load_manifest(arguments.manifest)
+        if arguments.mode == "baseline":
+            validate_private_baselines(items)
     except ManifestValidationError as error:
         for message in error.errors:
             print(f"error: {message}", file=sys.stderr)
         return 1
-    print(f"valid: {len(items)} human-labelled real-speech utterances")
+    print(f"valid: {len(items)} human-labelled real-speech utterances ({arguments.mode} mode)")
     return 0
 
 
@@ -86,14 +88,25 @@ def command_run(arguments: argparse.Namespace) -> int:
         return 1
 
     git = git_metadata(REPOSITORY_ROOT)
-    run_id = arguments.run_id or _run_id(git)
+    run_id = arguments.run_id or f"{_run_id(git)}-{arguments.provider}"
     rows: list[dict[str, Any]] = []
     started = datetime.now(timezone.utc)
     for index, item in enumerate(items, start=1):
         print(f"[{index}/{len(items)}] {item.id}", flush=True)
         item_started = time.perf_counter()
         try:
-            rows.append(score_item(item, client.run_pipeline(item.file, known_terms=known_terms)))
+            rows.append(
+                score_item(
+                    item,
+                    client.run_pipeline(
+                        item.file,
+                        provider=arguments.provider,
+                        known_terms=known_terms,
+                    ),
+                    system="yap",
+                    provider=arguments.provider,
+                )
+            )
         except Exception as error:
             rows.append(
                 {
@@ -103,18 +116,22 @@ def command_run(arguments: argparse.Namespace) -> int:
                     "category": item.category,
                     "noise": item.noise,
                     "reference": item.reference,
+                    "system": "yap",
+                    "provider": arguments.provider,
                     "error": str(error),
                     "failedAfterMs": round((time.perf_counter() - item_started) * 1000),
                 }
             )
+    rows.extend(baseline_rows(items))
     metadata = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "runId": run_id,
         "startedAt": started.isoformat(),
         "finishedAt": datetime.now(timezone.utc).isoformat(),
         "manifest": str(arguments.manifest.resolve()),
         "manifestSha256": _sha256(arguments.manifest),
         "pipeline": "production-yap-transcribe-plus-enhance",
+        "provider": arguments.provider,
         "git": git,
     }
     output = arguments.output / run_id
@@ -125,6 +142,38 @@ def command_run(arguments: argparse.Namespace) -> int:
         return 1
     print(f"wrote {output / 'report.md'}")
     return 0 if all(not row.get("error") for row in rows) else 2
+
+
+def command_baseline(arguments: argparse.Namespace) -> int:
+    try:
+        items = load_manifest(arguments.manifest)
+        validate_private_baselines(items)
+    except ManifestValidationError as error:
+        for message in error.errors:
+            print(f"error: {message}", file=sys.stderr)
+        return 1
+    git = git_metadata(REPOSITORY_ROOT)
+    run_id = arguments.run_id or f"{_run_id(git)}-baselines"
+    now = datetime.now(timezone.utc).isoformat()
+    metadata = {
+        "schemaVersion": 2,
+        "runId": run_id,
+        "startedAt": now,
+        "finishedAt": now,
+        "manifest": str(arguments.manifest.resolve()),
+        "manifestSha256": _sha256(arguments.manifest),
+        "pipeline": "manual-baselines-only",
+        "provider": None,
+        "git": git,
+    }
+    output = arguments.output / run_id
+    try:
+        write_report(output, build_report(metadata, baseline_rows(items)))
+    except FileExistsError:
+        print(f"error: run directory already exists: {output}", file=sys.stderr)
+        return 1
+    print(f"wrote {output / 'report.md'}")
+    return 0
 
 
 def _load_text_manifest(path: Path) -> list[dict[str, Any]]:
@@ -197,6 +246,8 @@ def command_run_text(arguments: argparse.Namespace) -> int:
                         enhancement_provider=payload.get("provider"),
                         enhancement_error=enhancement_error,
                     ),
+                    system="yap",
+                    provider=None,
                 )
             )
         except Exception as error:
@@ -219,6 +270,7 @@ def command_run_text(arguments: argparse.Namespace) -> int:
         "manifest": str(arguments.manifest.resolve()),
         "manifestSha256": _sha256(arguments.manifest),
         "pipeline": "production-yap-enhance-only",
+        "provider": None,
         "git": git,
     }
     output = arguments.output / run_id
@@ -252,7 +304,16 @@ def build_parser() -> argparse.ArgumentParser:
 
     validate = subcommands.add_parser("validate", help="strictly validate a speech manifest")
     validate.add_argument("manifest", type=Path)
+    validate.add_argument("--mode", choices=("pipeline", "baseline"), default="pipeline")
     validate.set_defaults(handler=command_validate)
+
+    baseline = subcommands.add_parser(
+        "baseline", help="score manually captured Gboard and Apple Dictation outputs"
+    )
+    baseline.add_argument("manifest", type=Path)
+    baseline.add_argument("--output", type=Path, default=TOOL_ROOT / "results")
+    baseline.add_argument("--run-id")
+    baseline.set_defaults(handler=command_baseline)
 
     for name, handler, help_text in (
         ("run", command_run, "run real speech through production transcription and enhancement"),
@@ -266,6 +327,13 @@ def build_parser() -> argparse.ArgumentParser:
         command.add_argument("--transcription-timeout", type=float, default=8.0)
         command.add_argument("--enhancement-timeout", type=float, default=2.5)
         command.add_argument("--retries", type=int, default=2)
+        if name == "run":
+            command.add_argument(
+                "--provider",
+                choices=sorted(SUPPORTED_PROVIDERS),
+                default="sarvam",
+                help="ASR provider; apple runs locally through Speech.framework",
+            )
         command.set_defaults(handler=handler)
     return parser
 

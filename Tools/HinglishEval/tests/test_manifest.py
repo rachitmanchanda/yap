@@ -4,10 +4,28 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from hinglish_eval.manifest import ManifestValidationError, load_manifest
+from hinglish_eval.manifest import (
+    ManifestValidationError,
+    load_manifest,
+    validate_private_baselines,
+)
+from hinglish_eval.models import ManifestItem
 
 
 class ManifestTests(unittest.TestCase):
+    def test_requires_both_manual_outputs_in_baseline_mode(self) -> None:
+        item = ManifestItem(
+            id="private-1",
+            file=Path("clip.wav"),
+            reference="kal meeting hai",
+            source="private-holdout",
+            category="work-message",
+            noise="clean",
+            baseline_gboard="kal meeting he",
+        )
+        with self.assertRaisesRegex(ManifestValidationError, "baselineApple"):
+            validate_private_baselines([item])
+
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary.name)

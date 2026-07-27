@@ -10,7 +10,9 @@
       "category": "whatsapp-casual",
       "noise": "clean",
       "entities": [],
-      "switchIndexes": []
+      "switchIndexes": [],
+      "baselineGboard": "",
+      "baselineApple": ""
     },
     {
       "id": "placeholder-work-01",
@@ -20,7 +22,9 @@
       "category": "work-message",
       "noise": "clean",
       "entities": [],
-      "switchIndexes": []
+      "switchIndexes": [],
+      "baselineGboard": "",
+      "baselineApple": ""
     },
     {
       "id": "placeholder-numbers-01",
@@ -30,7 +34,9 @@
       "category": "numbers-dates",
       "noise": "noisy",
       "entities": [],
-      "switchIndexes": []
+      "switchIndexes": [],
+      "baselineGboard": "",
+      "baselineApple": ""
     },
     {
       "id": "placeholder-names-01",
@@ -40,7 +46,9 @@
       "category": "names-places",
       "noise": "clean",
       "entities": [],
-      "switchIndexes": []
+      "switchIndexes": [],
+      "baselineGboard": "",
+      "baselineApple": ""
     },
     {
       "id": "placeholder-slang-01",
@@ -50,7 +58,9 @@
       "category": "slang",
       "noise": "noisy",
       "entities": [],
-      "switchIndexes": []
+      "switchIndexes": [],
+      "baselineGboard": "",
+      "baselineApple": ""
     }
   ]
 }

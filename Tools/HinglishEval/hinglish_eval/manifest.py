@@ -60,6 +60,8 @@ def load_manifest(path: Path, *, require_audio: bool = True) -> list[ManifestIte
         file_value = str(row.get("file", "")).strip()
         entities_value = row.get("entities", [])
         switches_value = row.get("switchIndexes", [])
+        baseline_gboard = str(row.get("baselineGboard", "") or "").strip() or None
+        baseline_apple = str(row.get("baselineApple", "") or "").strip() or None
 
         if not SAFE_ID_PATTERN.fullmatch(item_id):
             errors.append(f"{label}: id must use letters, numbers, '.', '_' or '-'")
@@ -105,7 +107,8 @@ def load_manifest(path: Path, *, require_audio: bool = True) -> list[ManifestIte
 
         known_keys = {
             "id", "file", "reference", "source", "category", "noise",
-            "entities", "switchIndexes", "datasetTranscript",
+            "entities", "switchIndexes", "baselineGboard", "baselineApple",
+            "datasetTranscript",
         }
         metadata = {key: value for key, value in row.items() if key not in known_keys}
         items.append(
@@ -118,6 +121,8 @@ def load_manifest(path: Path, *, require_audio: bool = True) -> list[ManifestIte
                 noise=noise,
                 entities=entities,
                 switch_indexes=switches,
+                baseline_gboard=baseline_gboard,
+                baseline_apple=baseline_apple,
                 dataset_transcript=row.get("datasetTranscript"),
                 metadata=metadata,
             )
@@ -125,3 +130,18 @@ def load_manifest(path: Path, *, require_audio: bool = True) -> list[ManifestIte
     if errors:
         raise ManifestValidationError(errors)
     return sorted(items, key=lambda item: item.id)
+
+
+def validate_private_baselines(items: list[ManifestItem]) -> None:
+    """Baseline mode is meaningful only when every private clip has both manual outputs."""
+    private_items = [item for item in items if item.source == "private-holdout"]
+    errors: list[str] = []
+    if not private_items:
+        errors.append("baseline mode requires at least one source='private-holdout' item")
+    for item in private_items:
+        if not item.baseline_gboard:
+            errors.append(f"item {item.id}: baselineGboard is required for private-holdout")
+        if not item.baseline_apple:
+            errors.append(f"item {item.id}: baselineApple is required for private-holdout")
+    if errors:
+        raise ManifestValidationError(errors)

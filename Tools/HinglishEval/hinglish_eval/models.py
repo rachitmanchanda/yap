@@ -19,6 +19,8 @@ SUPPORTED_CATEGORIES = frozenset(
     }
 )
 SUPPORTED_NOISE_TAGS = frozenset({"clean", "noisy"})
+SUPPORTED_PROVIDERS = frozenset({"sarvam", "whisper", "apple"})
+BASELINE_SYSTEMS = ("gboard", "apple-dictation")
 
 
 @dataclass(frozen=True)
@@ -31,6 +33,8 @@ class ManifestItem:
     noise: str
     entities: tuple[str, ...] = ()
     switch_indexes: tuple[int, ...] = ()
+    baseline_gboard: str | None = None
+    baseline_apple: str | None = None
     dataset_transcript: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 

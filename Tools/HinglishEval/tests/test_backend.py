@@ -20,6 +20,8 @@ class BackendTests(unittest.TestCase):
                 self.assertIn(b'name="mode"', body)
                 self.assertIn(b"translit", body)
                 self.assertIn(b'name="language_code"', body)
+                self.assertIn(b'name="provider"', body)
+                self.assertIn(b"sarvam", body)
                 return 200, json.dumps({"transcript": "kal meeting hai", "provider": "sarvam"}).encode()
             payload = json.loads(request.data)
             self.assertEqual(payload["operation"], "enhance")
@@ -33,7 +35,7 @@ class BackendTests(unittest.TestCase):
                 BackendConfiguration("https://example.invalid", "public-key"),
                 transport=transport,
             )
-            result = client.run_pipeline(audio, known_terms=["Rachit"])
+            result = client.run_pipeline(audio, provider="sarvam", known_terms=["Rachit"])
 
         self.assertEqual(len(requests), 2)
         self.assertEqual(timeouts, [8.0, 2.5])
@@ -57,7 +59,7 @@ class BackendTests(unittest.TestCase):
             transport=transport,
             sleep=sleeps.append,
         )
-        result = client.transcribe(Path(__file__), known_terms=[])
+        result = client.transcribe(Path(__file__), provider="sarvam", known_terms=[])
         self.assertEqual(result["text"], "done")
         self.assertEqual(sleeps, [1, 2])
 
@@ -90,7 +92,7 @@ class BackendTests(unittest.TestCase):
     def test_pipeline_falls_back_to_raw_when_enhancement_fails(self) -> None:
         def transport(request, timeout):
             if request.full_url.endswith("/transcribe"):
-                return 200, b'{"transcript":"kal meeting hai"}'
+                return 200, b'{"transcript":"kal meeting hai","provider":"sarvam"}'
             raise TimeoutError("rewrite exceeded budget")
 
         with tempfile.TemporaryDirectory() as temporary:
@@ -101,9 +103,50 @@ class BackendTests(unittest.TestCase):
                 transport=transport,
                 sleep=lambda _: None,
             )
-            result = client.run_pipeline(audio)
+            result = client.run_pipeline(audio, provider="sarvam")
         self.assertEqual(result.final_text, "kal meeting hai")
         self.assertIn("rewrite request failed", result.enhancement_error)
+
+    def test_rejects_silent_provider_fallback(self) -> None:
+        def transport(request, timeout):
+            return 200, b'{"transcript":"kal meeting hai","provider":"sarvam"}'
+
+        with tempfile.TemporaryDirectory() as temporary:
+            audio = Path(temporary) / "clip.m4a"
+            audio.write_bytes(b"recorded-audio")
+            client = YAPBackendClient(
+                BackendConfiguration("https://example.invalid", "public-key"),
+                transport=transport,
+            )
+            with self.assertRaisesRegex(RuntimeError, "deploy provider routing"):
+                client.run_pipeline(audio, provider="whisper")
+
+    def test_apple_provider_uses_local_bridge_then_enhancement(self) -> None:
+        class Bridge:
+            def transcribe(self, audio_file):
+                return "kal meeting hai"
+
+            def normalize(self, text):
+                return text
+
+        requests = []
+
+        def transport(request, timeout):
+            requests.append(request)
+            return 200, b'{"text":"Kal meeting hai.","provider":"deepseek"}'
+
+        with tempfile.TemporaryDirectory() as temporary:
+            audio = Path(temporary) / "clip.m4a"
+            audio.write_bytes(b"recorded-audio")
+            client = YAPBackendClient(
+                BackendConfiguration("https://example.invalid", "public-key"),
+                transport=transport,
+                apple_bridge=Bridge(),
+            )
+            result = client.run_pipeline(audio, provider="apple")
+        self.assertEqual(len(requests), 1)
+        self.assertTrue(requests[0].full_url.endswith("/rewrite"))
+        self.assertEqual(result.asr_provider, "apple")
 
 
 if __name__ == "__main__":

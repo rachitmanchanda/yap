@@ -7,6 +7,7 @@ import mimetypes
 import os
 import re
 import subprocess
+import sys
 import time
 import urllib.error
 import urllib.request
@@ -15,7 +16,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
-from .models import PipelineResult
+from .models import PipelineResult, SUPPORTED_PROVIDERS
 
 
 Transport = Callable[[urllib.request.Request, float], tuple[int, bytes]]
@@ -46,6 +47,67 @@ class BackendConfiguration:
         return cls(base_url.rstrip("/"), api_key, os.environ.get("YAP_ACCESS_TOKEN"))
 
 
+class AppleSpeechBridge:
+    """Build and invoke the same Speech/Foundation APIs used by YAP's Apple fallback."""
+
+    def __init__(self, tool_root: Path) -> None:
+        self.tool_root = tool_root
+        self.source = tool_root / "apple_speech/main.swift"
+        self.info_plist = tool_root / "apple_speech/Info.plist"
+        self.binary = tool_root / ".cache/bin/yap-apple-speech"
+
+    def transcribe(self, audio_file: Path) -> str:
+        payload = self._run("transcribe", str(audio_file), "en-IN")
+        transcript = str(payload.get("transcript", "")).strip()
+        if not transcript:
+            raise RuntimeError("Apple Speech returned an empty transcript")
+        return transcript
+
+    def normalize(self, text: str) -> str:
+        payload = self._run("normalize", text)
+        normalized = str(payload.get("text", "")).strip()
+        return normalized or text
+
+    def _run(self, *arguments: str) -> dict[str, Any]:
+        self._ensure_binary()
+        process = subprocess.run(
+            [str(self.binary), *arguments],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        try:
+            payload = json.loads(process.stdout)
+        except json.JSONDecodeError as error:
+            detail = process.stderr.strip() or process.stdout.strip() or "no output"
+            raise RuntimeError(f"Apple Speech helper failed: {detail}") from error
+        if process.returncode != 0 or payload.get("error"):
+            raise RuntimeError(str(payload.get("error") or "Apple Speech helper failed"))
+        return payload
+
+    def _ensure_binary(self) -> None:
+        if sys.platform != "darwin":
+            raise RuntimeError("--provider apple requires macOS with Xcode and Speech.framework")
+        inputs = (self.source, self.info_plist)
+        if not all(path.is_file() for path in inputs):
+            raise RuntimeError("Apple Speech helper sources are missing")
+        newest_input = max(path.stat().st_mtime for path in inputs)
+        if self.binary.is_file() and self.binary.stat().st_mtime >= newest_input:
+            return
+        self.binary.parent.mkdir(parents=True, exist_ok=True)
+        command = [
+            "xcrun", "swiftc", str(self.source),
+            "-framework", "Foundation", "-framework", "Speech",
+            "-Xlinker", "-sectcreate", "-Xlinker", "__TEXT",
+            "-Xlinker", "__info_plist", "-Xlinker", str(self.info_plist),
+            "-o", str(self.binary),
+        ]
+        process = subprocess.run(command, check=False, capture_output=True, text=True)
+        if process.returncode != 0:
+            raise RuntimeError(f"could not build Apple Speech helper: {process.stderr.strip()}")
+        subprocess.run(["codesign", "--force", "--sign", "-", str(self.binary)], check=True)
+
+
 def _default_transport(request: urllib.request.Request, timeout: float) -> tuple[int, bytes]:
     with urllib.request.urlopen(request, timeout=timeout) as response:
         return response.status, response.read()
@@ -61,6 +123,7 @@ class YAPBackendClient:
         retries: int = 2,
         transport: Transport = _default_transport,
         sleep: Callable[[float], None] = time.sleep,
+        apple_bridge: AppleSpeechBridge | None = None,
     ) -> None:
         self.configuration = configuration
         self.transcription_timeout = transcription_timeout
@@ -68,17 +131,39 @@ class YAPBackendClient:
         self.retries = retries
         self.transport = transport
         self.sleep = sleep
+        self.apple_bridge = apple_bridge or AppleSpeechBridge(Path(__file__).resolve().parents[1])
 
     def run_pipeline(
-        self, audio_file: Path, *, known_terms: list[str] | None = None
+        self,
+        audio_file: Path,
+        *,
+        provider: str,
+        known_terms: list[str] | None = None,
     ) -> PipelineResult:
+        if provider not in SUPPORTED_PROVIDERS:
+            raise ValueError(f"unsupported transcription provider '{provider}'")
         started = time.perf_counter()
         asr_started = time.perf_counter()
-        transcript_payload = self.transcribe(audio_file, known_terms=known_terms or [])
+        if provider == "apple":
+            raw_asr = self.apple_bridge.transcribe(audio_file)
+            transcript_payload: dict[str, Any] = {"transcript": raw_asr, "provider": "apple"}
+        else:
+            transcript_payload = self.transcribe(
+                audio_file,
+                provider=provider,
+                known_terms=known_terms or [],
+            )
+            actual_provider = transcript_payload.get("provider")
+            if actual_provider != provider:
+                raise RuntimeError(
+                    f"transcription endpoint returned provider '{actual_provider}' "
+                    f"after '{provider}' was requested; deploy provider routing before scoring"
+                )
         asr_ms = round((time.perf_counter() - asr_started) * 1000)
         raw_asr = str(transcript_payload.get("transcript", "")).strip()
         if not raw_asr:
             raise RuntimeError("transcription endpoint returned an empty transcript")
+        raw_asr = self._normalize_if_needed(raw_asr)
 
         enhancement_started = time.perf_counter()
         enhancement_error: str | None = None
@@ -88,6 +173,7 @@ class YAPBackendClient:
             final_text = str(enhancement_payload.get("text", "")).strip()
             if not final_text:
                 raise RuntimeError("enhancement endpoint returned empty text")
+            final_text = self._normalize_if_needed(final_text)
         except RuntimeError as error:
             # The app treats enhancement as optional polish and inserts the usable raw transcript
             # when its 2.5-second budget or provider request fails.
@@ -105,12 +191,19 @@ class YAPBackendClient:
             enhancement_error=enhancement_error,
         )
 
-    def transcribe(self, audio_file: Path, *, known_terms: list[str]) -> dict[str, Any]:
+    def transcribe(
+        self,
+        audio_file: Path,
+        *,
+        provider: str,
+        known_terms: list[str],
+    ) -> dict[str, Any]:
         boundary = f"YAP-HINGLISH-EVAL-{uuid.uuid4().hex}"
         fields = {
             "language_code": "unknown",
             "mode": "translit",
             "vocabulary": ",".join(known_terms),
+            "provider": provider,
         }
         chunks: list[bytes] = []
         for name, value in fields.items():
@@ -137,6 +230,11 @@ class YAPBackendClient:
             f"multipart/form-data; boundary={boundary}",
             timeout=self.transcription_timeout,
         )
+
+    def _normalize_if_needed(self, text: str) -> str:
+        if any(character.isalpha() and ord(character) > 127 for character in text):
+            return self.apple_bridge.normalize(text)
+        return text
 
     def enhance(self, text: str, *, known_terms: list[str]) -> dict[str, Any]:
         body = json.dumps(
