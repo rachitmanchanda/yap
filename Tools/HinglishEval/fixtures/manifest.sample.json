@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "notes": "Replace each file and reference with a real recording and your human-written Roman Hinglish sendable text. These intentionally fail validation until labelled.",
+  "items": [
+    {
+      "id": "placeholder-whatsapp-01",
+      "file": "audio/placeholder-whatsapp-01.m4a",
+      "reference": "",
+      "source": "private-holdout",
+      "category": "whatsapp-casual",
+      "noise": "clean",
+      "entities": [],
+      "switchIndexes": []
+    },
+    {
+      "id": "placeholder-work-01",
+      "file": "audio/placeholder-work-01.m4a",
+      "reference": "",
+      "source": "private-holdout",
+      "category": "work-message",
+      "noise": "clean",
+      "entities": [],
+      "switchIndexes": []
+    },
+    {
+      "id": "placeholder-numbers-01",
+      "file": "audio/placeholder-numbers-01.m4a",
+      "reference": "",
+      "source": "private-holdout",
+      "category": "numbers-dates",
+      "noise": "noisy",
+      "entities": [],
+      "switchIndexes": []
+    },
+    {
+      "id": "placeholder-names-01",
+      "file": "audio/placeholder-names-01.m4a",
+      "reference": "",
+      "source": "private-holdout",
+      "category": "names-places",
+      "noise": "clean",
+      "entities": [],
+      "switchIndexes": []
+    },
+    {
+      "id": "placeholder-slang-01",
+      "file": "audio/placeholder-slang-01.m4a",
+      "reference": "",
+      "source": "private-holdout",
+      "category": "slang",
+      "noise": "noisy",
+      "entities": [],
+      "switchIndexes": []
+    }
+  ]
+}

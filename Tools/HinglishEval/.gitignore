@@ -1,0 +1,9 @@
+.cache/
+results/
+annotation-queue*.json
+text-regressions*.json
+private-holdout*/
+private-holdout*.json
+private-holdout*.csv
+__pycache__/
+*.pyc

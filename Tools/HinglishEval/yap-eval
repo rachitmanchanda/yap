@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+"""Small executable wrapper so the tool works without installation."""
+
+from hinglish_eval.cli import main
+
+raise SystemExit(main())
