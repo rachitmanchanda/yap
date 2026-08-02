@@ -134,6 +134,29 @@ final class AuthModel {
         if let session = currentSession, !isBypassed {
             try? await service.signOut(session)
         }
+        clearLocalSession()
+    }
+
+    /// Deletes the remote account before erasing local data so a network failure is safely retryable.
+    func deleteAccount(removingLocalData: () throws -> Void) async throws {
+        guard let session = currentSession else { return }
+        if !isBypassed {
+            try await service.deleteAccount(session)
+        }
+
+        var cleanupError: Error?
+        do {
+            try removingLocalData()
+        } catch {
+            cleanupError = error
+        }
+        clearLocalSession()
+        if let cleanupError {
+            throw cleanupError
+        }
+    }
+
+    private func clearLocalSession() {
         try? store.save(nil)
         #if DEBUG
         bypassDefaults?.set(false, forKey: Self.bypassKey)

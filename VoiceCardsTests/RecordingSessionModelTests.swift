@@ -85,6 +85,36 @@ final class RecordingSessionModelTests: XCTestCase {
         XCTAssertEqual(bridge.load()?.completedText, "नमस्ते Rachit 👋")
         XCTAssertEqual(clipboard.value, "नमस्ते Rachit 👋")
     }
+
+    func testKeyboardAutomaticallyAppliesSharedDefaultModeAndInserts() async throws {
+        let previousDefault = AppPreferences.defaultModeID
+        defer { AppPreferences.defaultModeID = previousDefault }
+        let container = try SharedModelContainer.make(inMemory: true)
+        try ModeRepository(context: container.mainContext).seedBuiltInsIfNeeded()
+        AppPreferences.defaultModeID = "casual"
+        let sessionURL = FileManager.default.temporaryDirectory
+            .appending(path: "\(UUID().uuidString)-keyboard-session.json")
+        let bridge = KeyboardDictationBridge(sessionURL: sessionURL)
+        let session = bridge.begin()
+        defer { try? FileManager.default.removeItem(at: sessionURL) }
+        let model = RecordingSessionModel(
+            recorder: AudioRecorder(),
+            transcriptionService: StubRecordingTranscriber(),
+            rewriteService: StubRewriteService(),
+            context: container.mainContext,
+            clipboard: ClipboardSpy(),
+            keyboardSessionID: session.id,
+            dictationBridge: bridge
+        )
+        model.transcript = "kal ana rachit"
+        model.enhancedTranscript = "Kal aana, Rachit."
+
+        await model.completeKeyboardDictationUsingDefaultMode()
+
+        XCTAssertEqual(bridge.load()?.phase, .completed)
+        XCTAssertEqual(bridge.load()?.completedText, "Kal aana, Rachit.")
+        XCTAssertEqual(model.selectedModeID, "casual")
+    }
 }
 
 @MainActor

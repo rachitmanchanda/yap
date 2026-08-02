@@ -68,7 +68,10 @@ function systemPrompt(body: RewriteBody): string {
     .join(", ");
   const languageRules = [
     "Preserve the speaker's language, vernacular, Hinglish, code-switching, emoji, names, and intent.",
-    "Correct obvious speech-recognition mistakes, grammar, and punctuation without inventing facts.",
+    "If Hindi or another Indian language is written in Latin characters, keep it in Latin characters. Never convert it to Devanagari or another native script. Keep English as English.",
+    "Treat Roman Hinglish as vernacular, not misspelled English. Correct a Hindi word only when its intended form is clear from context, and keep natural forms such as kya, nahi, mat, karna, wala, and hai in Roman script.",
+    "Correct obvious speech-recognition mistakes, grammar, punctuation, duplicated fragments, and false starts without inventing facts.",
+    "Use the complete sentence as context to repair phonetic spellings into the intended word. Never leave stray apostrophes, split syllables, or phonetic fragments inside ordinary words.",
     terms ? `Use these exact preferred spellings when contextually relevant: ${terms}.` : "",
   ].filter(Boolean).join(" ");
 
@@ -84,7 +87,23 @@ function systemPrompt(body: RewriteBody): string {
     case "enhance":
       return [
         languageRules,
-        "Be conservative: if no correction is clearly needed, preserve the text exactly.",
+        [
+          "Clean the transcript into the message the speaker naturally meant to type.",
+          "Keep it relaxed, concise, conversational, and easy to read without making it more expressive than the speaker was.",
+          "Fix clear recognition errors, punctuation, casing, grammar, agreement, and sentence structure so the final message is coherent.",
+          "Use full-sentence context to repair phonetic ASR spellings into the intended word; for example, sarti'fied should become certified when that is what the sentence means.",
+          "Remove um, umm, uh, aah, ah, erm, and comparable hesitation sounds. Remove non-semantic you know, repeated lead-ins, verbal stumbles, false starts, and accidental duplicated phrases, but retain those words when they carry actual meaning.",
+          "Add sensible sentence or paragraph breaks for readability.",
+          "Preserve Hinglish and code-switching wherever natural; never flatten mixed-language speech into formal English.",
+          "Resolve obvious speech-recognition fragments into natural Roman Hinglish only when context is unambiguous; for example, 1 toh may be ek toh, and split or malformed forms may become aadat lag gayi.",
+          "Preserve the speaker's casing and punctuation style. Keep a casual lowercase message lowercase except for names and terms whose spelling requires capitals.",
+          "Use commas inside a long message only when they make it easier to read. If the transcript has no terminal punctuation, do not add a final full stop.",
+          "Never introduce an exclamation mark, question mark, emoji, or other emotional punctuation unless it was dictated or already present in the transcript.",
+          "Short fragments are valid messages; do not expand or over-connect them.",
+          "Do not replace natural code-switching with literal translations or textbook Hindi.",
+          "Never translate, formalize, sanitize, summarize, add a greeting or sign-off, or invent content.",
+          "If no cleanup is needed, preserve the text exactly.",
+        ].join(" "),
         "Return JSON only: {\"text\":\"corrected transcript\",\"changed\":true_or_false}.",
       ].join("\n\n");
   }

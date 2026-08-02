@@ -31,7 +31,7 @@ struct CaptureLatencySnapshot: Codable, Sendable {
 /// Persists the last real-device timing so speed work is driven by measurements, not animation feel.
 @MainActor
 final class CaptureLatencyTracker {
-    private let logger = Logger(subsystem: "com.APP.VoiceCards", category: "CaptureLatency")
+    private let logger = Logger(subsystem: "com.rachitmanchanda.yap.beta", category: "CaptureLatency")
     private var snapshot = CaptureLatencySnapshot(measuredAt: .now)
     private var requestedAt: Date?
     private var stoppedAt: Date?

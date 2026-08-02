@@ -26,6 +26,8 @@ final class AudioRecorder {
     var onPCMData: (@Sendable (Data) -> Void)?
 
     private var engine: AVAudioEngine?
+    private var inputFormat: AVAudioFormat?
+    private var captureRouter: AudioCaptureRouter?
     private var pipeline: AudioCapturePipeline?
     private var meterTask: Task<Void, Never>?
     private var startedAt: Date?
@@ -36,23 +38,13 @@ final class AudioRecorder {
         let granted = await AVAudioApplication.requestRecordPermission()
         guard granted else { throw AudioRecorderError.permissionDenied }
 
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.record, mode: .spokenAudio, options: [])
-        try session.setPreferredSampleRate(16_000)
-        try session.setPreferredIOBufferDuration(0.032)
-        try session.setActive(true, options: .notifyOthersOnDeactivation)
-
-        let directory = try AppGroup.audioDirectory()
-        // The same 16 kHz PCM feeds both streaming and a WAV retry file. Writing AAC directly
-        // from an Int16 converter is unsupported on some routes and produced Core Audio `!dat`.
-        let url = directory.appending(path: "\(UUID().uuidString).wav")
-        let engine = AVAudioEngine()
-        let input = engine.inputNode
-        let inputFormat = input.outputFormat(forBus: 0)
-        guard inputFormat.sampleRate > 0, inputFormat.channelCount > 0 else {
+        try prepareAudioSessionIfNeeded()
+        guard let inputFormat, let captureRouter else {
             throw AudioRecorderError.unableToStart
         }
 
+        let directory = try AppGroup.audioDirectory()
+        let url = directory.appending(path: "\(UUID().uuidString).wav")
         let pipeline = try AudioCapturePipeline(
             inputFormat: inputFormat,
             outputURL: url,
@@ -61,19 +53,7 @@ final class AudioRecorder {
                 Task { @MainActor in self?.level = value }
             }
         )
-        input.installTap(onBus: 0, bufferSize: 1_024, format: inputFormat) { buffer, _ in
-            pipeline.process(buffer)
-        }
-
-        engine.prepare()
-        do {
-            try engine.start()
-        } catch {
-            input.removeTap(onBus: 0)
-            throw AudioRecorderError.unableToStart
-        }
-
-        self.engine = engine
+        captureRouter.begin(pipeline)
         self.pipeline = pipeline
         currentURL = url
         startedAt = .now
@@ -83,35 +63,86 @@ final class AudioRecorder {
         startMetering()
     }
 
-    func stop() throws -> URL {
-        stopEngine()
+    func stop(keepSessionActive: Bool = false) throws -> URL {
+        stopCapture()
         guard elapsed >= 0.65 else {
             if let currentURL { try? FileManager.default.removeItem(at: currentURL) }
+            if !keepSessionActive { endSession() }
             throw AudioRecorderError.tooShort
         }
         guard let currentURL else { throw AudioRecorderError.unableToStart }
+        if !keepSessionActive { endSession() }
         return currentURL
     }
 
-    func cancel() {
-        stopEngine()
+    func cancel(keepSessionActive: Bool = false) {
+        stopCapture()
         if let currentURL { try? FileManager.default.removeItem(at: currentURL) }
         currentURL = nil
+        if !keepSessionActive { endSession() }
     }
 
-    private func stopEngine() {
-        meterTask?.cancel()
-        meterTask = nil
-        engine?.inputNode.removeTap(onBus: 0)
+    /// Ends an explicitly armed Flow session. While armed but idle, input buffers are discarded
+    /// without being written to disk or sent to transcription.
+    func endSession() {
+        stopCapture()
+        if let input = engine?.inputNode {
+            input.removeTap(onBus: 0)
+        }
         engine?.stop()
         engine = nil
-        // Releasing AVAudioFile finalizes the m4a container before it is uploaded.
-        pipeline = nil
-        isRecording = false
+        inputFormat = nil
+        captureRouter = nil
         try? AVAudioSession.sharedInstance().setActive(
             false,
             options: .notifyOthersOnDeactivation
         )
+    }
+
+    private func stopCapture() {
+        meterTask?.cancel()
+        meterTask = nil
+        captureRouter?.finish()
+        // Releasing AVAudioFile finalizes the WAV container before it is uploaded.
+        pipeline = nil
+        isRecording = false
+        level = 0
+    }
+
+    private func prepareAudioSessionIfNeeded() throws {
+        if let engine, engine.isRunning { return }
+        if engine != nil { endSession() }
+
+        let session = AVAudioSession.sharedInstance()
+        // `spokenAudio` is a playback-oriented mode and can fail with OSStatus -50 when paired
+        // with the record-only category on physical devices. Measurement is explicitly supported
+        // with `.record` and avoids extra system processing before speech recognition.
+        try session.setCategory(.record, mode: .measurement, options: [])
+        try session.setPreferredSampleRate(16_000)
+        try session.setPreferredIOBufferDuration(0.032)
+        try session.setActive(true, options: .notifyOthersOnDeactivation)
+
+        let engine = AVAudioEngine()
+        let input = engine.inputNode
+        let inputFormat = input.outputFormat(forBus: 0)
+        guard inputFormat.sampleRate > 0, inputFormat.channelCount > 0 else {
+            throw AudioRecorderError.unableToStart
+        }
+        let router = AudioCaptureRouter()
+        input.installTap(onBus: 0, bufferSize: 1_024, format: inputFormat) { buffer, _ in
+            router.process(buffer)
+        }
+        engine.prepare()
+        do {
+            try engine.start()
+        } catch {
+            input.removeTap(onBus: 0)
+            try? session.setActive(false, options: .notifyOthersOnDeactivation)
+            throw AudioRecorderError.unableToStart
+        }
+        self.engine = engine
+        self.inputFormat = inputFormat
+        captureRouter = router
     }
 
     private func startMetering() {
@@ -127,6 +158,25 @@ final class AudioRecorder {
                 }
             }
         }
+    }
+}
+
+/// The audio engine remains active during a user-started Flow session, but this router forwards
+/// samples only while a dictation segment is recording. Idle audio is never retained or uploaded.
+private final class AudioCaptureRouter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var pipeline: AudioCapturePipeline?
+
+    func begin(_ pipeline: AudioCapturePipeline) {
+        lock.withLock { self.pipeline = pipeline }
+    }
+
+    func finish() {
+        lock.withLock { pipeline = nil }
+    }
+
+    func process(_ buffer: AVAudioPCMBuffer) {
+        lock.withLock { pipeline?.process(buffer) }
     }
 }
 

@@ -1,0 +1,1241 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		04EC0014E858BF339173FC6B /* Shared/Utilities/AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EBF77B3EBEAB86090D1574 /* Shared/Utilities/AppPreferences.swift */; };
+		07D104F385961D2448A568A3 /* Shared/Models/AuthSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5324D137EE26826A8686661 /* Shared/Models/AuthSession.swift */; };
+		0C50A3870F7647438B511439 /* Shared/Persistence/ClipboardRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9763D03DD43C563569CE783B /* Shared/Persistence/ClipboardRepository.swift */; };
+		10BD3AEEC44C89F331F48391 /* Shared/Utilities/RelativeDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8361B901C53EDC97D24EEDA6 /* Shared/Utilities/RelativeDateFormatter.swift */; };
+		111413D99EE29AE665547CC8 /* VoiceCardsApp/Stream/CardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 258087E5B86A88CB5224E868 /* VoiceCardsApp/Stream/CardDetailView.swift */; };
+		12382321E5FCE1569075BDD1 /* VoiceCardsApp/Search/SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E128C52087BC1D2575055E2B /* VoiceCardsApp/Search/SearchView.swift */; };
+		14341DF1900B964D0D6AE917 /* Shared/Services/NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AC05354D4EE235BA3AD2DB4 /* Shared/Services/NetworkMonitor.swift */; };
+		150FD0B8616D419E142165F2 /* VoiceCardsApp/Stream/StreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972D5D172074ECD07AA0D7A6 /* VoiceCardsApp/Stream/StreamView.swift */; };
+		15A238F259C44C0EB8499C1B /* Shared/Services/RetryQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD94689462D2138A08094CC /* Shared/Services/RetryQueue.swift */; };
+		178FA559D817E30C42231B2B /* Shared/Models/BuiltInModes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C5837C2A5E4530FFC2B184 /* Shared/Models/BuiltInModes.swift */; };
+		1916FA8369659AE907E488ED /* Shared/Models/DictationActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 486481BA327CB72B3C04D7E1 /* Shared/Models/DictationActivityAttributes.swift */; };
+		1B0F10000000000000000001 /* Shared/Models/KeyboardDictationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028D3AB22AA7B4A923551734 /* Shared/Models/KeyboardDictationSession.swift */; };
+		1B0F10000000000000000002 /* Shared/Utilities/AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CC23D7CB8DF2D0522AB1A7 /* Shared/Utilities/AppGroup.swift */; };
+		1ABAFF434A9221593008DC67 /* Shared/Models/PersonalTerm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 816E70CD4D7630850AB124EC /* Shared/Models/PersonalTerm.swift */; };
+		1E4C34235C189EFA32D92B52 /* VoiceCardsTests/KeyboardModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B7A02056053CAEC66BB19E /* VoiceCardsTests/KeyboardModelTests.swift */; };
+		1FBCB556FC23FBE7DC8F09C8 /* Shared/Persistence/ModeRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A3DE315A1776FE94B0EFBD /* Shared/Persistence/ModeRepository.swift */; };
+		217BF3583E320388C7433EC4 /* Shared/Models/PendingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FEA0474ABF5E8472C3B174 /* Shared/Models/PendingOperation.swift */; };
+		2342C46672B003BD77C6845E /* VoiceCardsApp/Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A6C871611954C3F1C0CE53F /* VoiceCardsApp/Resources/Assets.xcassets */; };
+		257B242F39FA20BF71708CD8 /* VoiceCardsTests/ServiceResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DF65049F85EA5E9AF023A7E /* VoiceCardsTests/ServiceResponseTests.swift */; };
+		26926B2D59C270B34009E866 /* Shared/Services/SupabaseRewriteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23B0851692B9D2AB7858E0C /* Shared/Services/SupabaseRewriteService.swift */; };
+		27F0F1F33EDE11BBA86611B2 /* Shared/Utilities/AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EBF77B3EBEAB86090D1574 /* Shared/Utilities/AppPreferences.swift */; };
+		28479C76940BBC733DA923E9 /* Shared/Persistence/ModeRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A3DE315A1776FE94B0EFBD /* Shared/Persistence/ModeRepository.swift */; };
+		291CA908B6C350CAD0C9E06D /* VoiceCardsLiveActivity/VoiceCardsLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E35338C018560C77980467 /* VoiceCardsLiveActivity/VoiceCardsLiveActivityBundle.swift */; };
+		2BD5F002291B8E7A75A62B7B /* Shared/Models/Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE8197DB36F4CE8534FCFD9 /* Shared/Models/Card.swift */; };
+		2C8FB7983E6CE6A28A40C6FD /* VoiceCardsApp/Intents/VoiceCardsShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D4B04A74411291300CBB11 /* VoiceCardsApp/Intents/VoiceCardsShortcuts.swift */; };
+		303C72EADE31E0FCBFFCDAD8 /* Shared/Models/ClipboardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F3785421B7894152CE5B72 /* Shared/Models/ClipboardItem.swift */; };
+		3125EAFB33E22A3C184E10A4 /* VoiceCardsApp/Settings/KeyboardSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CE0062B142897A213AAA61 /* VoiceCardsApp/Settings/KeyboardSetupView.swift */; };
+		32C1A1ABA5D9540F1EEA3F4D /* VoiceCardsLiveActivity/VoiceCardsDictationActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8AC82BF1CECDFEB6BF73A9 /* VoiceCardsLiveActivity/VoiceCardsDictationActivity.swift */; };
+		33481ABDF2B7A60D61734AF9 /* Shared/Services/VernacularTranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26EACF8049257F73B67D4C9 /* Shared/Services/VernacularTranscriptionService.swift */; };
+		368200DCD6017FD5FF8E0EB5 /* VoiceCardsApp/Search/SearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234E4C5BDB64D1BDC9F77D40 /* VoiceCardsApp/Search/SearchModel.swift */; };
+		40A76F26FA047A9BC5103F72 /* Shared/Persistence/CardRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE15FA3B900CAED90BE81736 /* Shared/Persistence/CardRepository.swift */; };
+		42ECAC4830659615ECFBA018 /* Shared/UI/ModeChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE747BFE592F5B6CCB0A0218 /* Shared/UI/ModeChip.swift */; };
+		43E2A12473CFDBEC29839920 /* VoiceCardsApp/RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F5C658E6C8A08235070D93 /* VoiceCardsApp/RootView.swift */; };
+		463443870E696D50C17DCD27 /* VoiceCardsApp/Clipboard/ClipboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2BB64F64757B2F54384EFB /* VoiceCardsApp/Clipboard/ClipboardView.swift */; };
+		465A6F3DD7AF54AC9ED69774 /* Shared/Models/PersonalTerm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 816E70CD4D7630850AB124EC /* Shared/Models/PersonalTerm.swift */; };
+		468E5FE3CB21AE78860747ED /* Shared/Services/TranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DC952719D91F3152B2454E /* Shared/Services/TranscriptionService.swift */; };
+		4698F74443BB19DB6F2C0B19 /* Shared/Persistence/CardRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE15FA3B900CAED90BE81736 /* Shared/Persistence/CardRepository.swift */; };
+		48D4AA9F63EB5D463F132ADC /* Shared/Services/RetryProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8BFE20E711608AB657E2B5 /* Shared/Services/RetryProcessor.swift */; };
+		48F33B8D725A903C38EB6E44 /* Shared/Services/SupabaseTranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A8D1217046E42671FF5820 /* Shared/Services/SupabaseTranscriptionService.swift */; };
+		4975E26FE47C736C14B468DD /* Shared/Utilities/AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EBF77B3EBEAB86090D1574 /* Shared/Utilities/AppPreferences.swift */; };
+		4A907D09D907B9945DC43829 /* VoiceCardsApp/Recording/DictationLiveActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65DE3913C3684D15CE20139 /* VoiceCardsApp/Recording/DictationLiveActivityController.swift */; };
+		4C9BCD8F09CE75DDB5715501 /* Shared/Services/NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5CC5CBC954826F2C831E4 /* Shared/Services/NetworkClient.swift */; };
+		4C9D182FB375E63B179E160E /* Shared/Persistence/ClipboardRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9763D03DD43C563569CE783B /* Shared/Persistence/ClipboardRepository.swift */; };
+		4F3447A4A44CE32DA3F679C1 /* Shared/Persistence/SharedModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BED488633FC7DD14D874856 /* Shared/Persistence/SharedModelContainer.swift */; };
+		50CFCE47A87D177AF42A5EFB /* VoiceCardsApp/Settings/SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7B433E4437FF4318567771 /* VoiceCardsApp/Settings/SettingsModel.swift */; };
+		5443F69B757DF6033CB1B620 /* Shared/Services/TitleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4C48523F37E0821C6E13E7 /* Shared/Services/TitleService.swift */; };
+		557B89E93F47F2DC0CA3A98D /* VoiceCardsApp/Modes/ModesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64E2D0CBF5685D01E34E3E5 /* VoiceCardsApp/Modes/ModesModel.swift */; };
+		58428E05E2CF845BDA080F42 /* Shared/Models/KeyboardDictationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028D3AB22AA7B4A923551734 /* Shared/Models/KeyboardDictationSession.swift */; };
+		587CAD927E26FBB310A04170 /* Shared/Services/AnthropicRewriteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C811CCAD90E206E28676290 /* Shared/Services/AnthropicRewriteService.swift */; };
+		59B78351D95EA0E32381E0BD /* Shared/Services/DeepSeekRewriteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCEF6E1F32B97E91D211A72A /* Shared/Services/DeepSeekRewriteService.swift */; };
+		5DB329B50B69FF9D095EDD8D /* Shared/Services/ClipboardCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886B7202683B4C8553CFCA70 /* Shared/Services/ClipboardCaptureService.swift */; };
+		5EFB0151B965C7EB52D66EA8 /* Shared/Services/SelectedRewriteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74BDE155F8650B2D7D45258 /* Shared/Services/SelectedRewriteService.swift */; };
+		5FF86A8020B5E663C8B5E2FA /* Shared/Persistence/ClipboardRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9763D03DD43C563569CE783B /* Shared/Persistence/ClipboardRepository.swift */; };
+		610D4BCEA301F81B091E614F /* VoiceCardsApp/AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60665C5F8CAD9846DFDA030F /* VoiceCardsApp/AppModel.swift */; };
+		61E6F9B04322926136C9F227 /* Shared/Persistence/SharedModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BED488633FC7DD14D874856 /* Shared/Persistence/SharedModelContainer.swift */; };
+		6285985EB2A9C4CBDB1BBC31 /* VoiceCardsApp/Auth/AuthModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E957C3426538EF832B1CEADA /* VoiceCardsApp/Auth/AuthModel.swift */; };
+		62E880E0BB5710116FF9E425 /* VoiceCardsKeyboard/KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BC22E0AEDA70F359808F74 /* VoiceCardsKeyboard/KeyboardView.swift */; };
+		634296E2345B6883886241D6 /* VoiceCardsTests/ClipboardHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6F55F084068019D875435AF /* VoiceCardsTests/ClipboardHistoryTests.swift */; };
+		650C4E16713A7AE72FBF01AE /* Shared/UI/CardPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7534EE5D1AF092580684E8 /* Shared/UI/CardPreview.swift */; };
+		6526EDEABE688EBDF7010F1B /* VoiceCardsApp/Onboarding/YapDesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFEC354B5826C9433AA2DFE /* VoiceCardsApp/Onboarding/YapDesignSystem.swift */; };
+		654B8D9479C24ED24D67C738 /* Shared/Services/ClipboardAssetStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16D9589D41DF1634BD273E7 /* Shared/Services/ClipboardAssetStore.swift */; };
+		67AEA8F78009A9E85BB8FD11 /* Shared/Services/SupabaseConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988869AE8F8CE5F8A50225C2 /* Shared/Services/SupabaseConfiguration.swift */; };
+		68D7A16BBD194EEBB8416616 /* Shared/Models/Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE8197DB36F4CE8534FCFD9 /* Shared/Models/Card.swift */; };
+		6AEC244B53DAFD6505532F63 /* Shared/Intents/StartKeyboardDictationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF510C9C32F8AD2F177AD382 /* Shared/Intents/StartKeyboardDictationIntent.swift */; };
+		6E3DDF3DE3E2CCC89E547754 /* Shared/Utilities/RelativeDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8361B901C53EDC97D24EEDA6 /* Shared/Utilities/RelativeDateFormatter.swift */; };
+		6FEE5DD11EF71367BCB2C31C /* Shared/Services/HistoryRetentionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59FBFF43BDC863E0F26F8AC /* Shared/Services/HistoryRetentionService.swift */; };
+		77F0E3979F74BA7AF22E5634 /* Shared/Models/PendingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FEA0474ABF5E8472C3B174 /* Shared/Models/PendingOperation.swift */; };
+		7D64F89C7117267EFA22DE9E /* VoiceCardsApp/Recording/WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49348A2DCE6E68561F9B328 /* VoiceCardsApp/Recording/WaveformView.swift */; };
+		8384CF3F96A416DE9A77EF2F /* Shared/Persistence/PersonalLexiconRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029D77206FDC28C109C6F0DB /* Shared/Persistence/PersonalLexiconRepository.swift */; };
+		873933AD6119706277CE5941 /* Shared/Intents/StartKeyboardDictationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF510C9C32F8AD2F177AD382 /* Shared/Intents/StartKeyboardDictationIntent.swift */; };
+		8740DDB4EE916A004FC8C092 /* Shared/Models/KeyboardDictationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028D3AB22AA7B4A923551734 /* Shared/Models/KeyboardDictationSession.swift */; };
+		87526990B7380F703466E337 /* Shared/Persistence/ModeRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A3DE315A1776FE94B0EFBD /* Shared/Persistence/ModeRepository.swift */; };
+		8A8A6D7332E76D29E2C7BF32 /* VoiceCardsApp/Recording/RewriteComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A032FBA4AD6DCAB0B70592 /* VoiceCardsApp/Recording/RewriteComparisonView.swift */; };
+		8B73BA9F8F536F191C1B1EA5 /* Shared/Services/SarvamSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88622F39318AA3E760965E3E /* Shared/Services/SarvamSpeechService.swift */; };
+		8CE296DEDA1B09AB4F5DE378 /* VoiceCardsApp/Recording/RecordingSessionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAC41841E1DE1A75C8E1C0A /* VoiceCardsApp/Recording/RecordingSessionModel.swift */; };
+		930B0D2EF75E7C4CBC8417F4 /* Shared/Persistence/CardRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE15FA3B900CAED90BE81736 /* Shared/Persistence/CardRepository.swift */; };
+		986B208AB98FEB93E8316BB9 /* Shared/Services/RomanScriptNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5029364991BB546F04F85B05 /* Shared/Services/RomanScriptNormalizer.swift */; };
+		9AB5B01E6495A7C61B4E6D88 /* VoiceCardsApp/Auth/AuthGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ECF0943B1C373286200A9F3 /* VoiceCardsApp/Auth/AuthGateView.swift */; };
+		9AD7D4CFDBA98F4A87A71468 /* VoiceCardsShare/ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC82937F2B6619155BE7FC37 /* VoiceCardsShare/ShareViewController.swift */; };
+		9B6C9C6707D5A4736D558617 /* Shared/Security/APIKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E77A3E3D60A74AC5CD73F4 /* Shared/Security/APIKeyStore.swift */; };
+		9C64F2749E923613B1466FF6 /* Shared/Utilities/AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4BBEDA7B509EC5BBB4CEDD /* Shared/Utilities/AppRoute.swift */; };
+		9CD89593846A98D46FC39077 /* Shared/Services/OnDeviceSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2AABB1C18B7B598D6B58078 /* Shared/Services/OnDeviceSpeechService.swift */; };
+		9D79E46B84FB4B72A9A6C311 /* VoiceCardsKeyboard/Resources/KeyboardAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D79E46B84FB4B72A9A6C312 /* VoiceCardsKeyboard/Resources/KeyboardAssets.xcassets */; };
+		9DDAE4B5B87BFE2E094A0FD7 /* VoiceCardsTests/RecordingSessionModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501B560CFD21CFA4AF27324F /* VoiceCardsTests/RecordingSessionModelTests.swift */; };
+		9E36ECB496767A1DA8EA10FF /* VoiceCardsKeyboard/KeyboardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35819F2254C635A218A7F89E /* VoiceCardsKeyboard/KeyboardModel.swift */; };
+		9F62F46312D88C5983E54383 /* Shared/Models/PersonalTerm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 816E70CD4D7630850AB124EC /* Shared/Models/PersonalTerm.swift */; };
+		9F6945BE421A940D9E0191BD /* Shared/Services/FallbackTranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5185E672554F5F092A24E81C /* Shared/Services/FallbackTranscriptionService.swift */; };
+		A0C956A4675881AD817A48DA /* Shared/Models/CardSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2B040DDA048B054234FFE9 /* Shared/Models/CardSourceType.swift */; };
+		A1890F4AEE0801A27FB7F100 /* VoiceCardsApp/Recording/CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD73E222674DCB83994D8A6D /* VoiceCardsApp/Recording/CaptureView.swift */; };
+		A4F973E765804FB5B8132EF4 /* YapKeyboard.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F916279A6880EFDDC154EE79 /* YapKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A63C11D67BB0F5A78938E3B1 /* Shared/Services/TranscriptEnhancementPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866898FAF2BDF0F7F23364A7 /* Shared/Services/TranscriptEnhancementPrompt.swift */; };
+		A670A3052D5B82A014B8F35F /* Shared/Models/RewriteMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C67CF6891C8B26F4BDC37B1 /* Shared/Models/RewriteMode.swift */; };
+		AB18B06EC24A279511D9DFB1 /* VoiceCardsApp/Settings/SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47E71645DBE929FE0B998FD /* VoiceCardsApp/Settings/SettingsView.swift */; };
+		AC38809C34BC5BBEF0341D95 /* VoiceCardsApp/Modes/ModesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8AF1A031574DDAB63B96FD3 /* VoiceCardsApp/Modes/ModesView.swift */; };
+		AE834E8421519D288335A6B8 /* Shared/Models/CardSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2B040DDA048B054234FFE9 /* Shared/Models/CardSourceType.swift */; };
+		AEA6871F11679C96B153EB99 /* VoiceCardsKeyboard/KeyboardClipboardButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E18F79C4EA3D0DB007A272 /* VoiceCardsKeyboard/KeyboardClipboardButton.swift */; };
+		B04E4A8A253AFAB376FFB38D /* VoiceCardsShare/ShareConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA1E939DA13390BD008CBD0 /* VoiceCardsShare/ShareConfirmationView.swift */; };
+		B25C6C70D3E8D42DC73C9284 /* Shared/Models/BuiltInModes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C5837C2A5E4530FFC2B184 /* Shared/Models/BuiltInModes.swift */; };
+		B51B843295ED9DC61462468A /* VoiceCardsApp/Clipboard/ClipboardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 915B9C45A2F550F9D7C4D0E1 /* VoiceCardsApp/Clipboard/ClipboardModel.swift */; };
+		B5398FD35D255ABFFA068133 /* Shared/Services/ClipboardAssetStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16D9589D41DF1634BD273E7 /* Shared/Services/ClipboardAssetStore.swift */; };
+		B5818B9872F9D78948CB0E37 /* Shared/Utilities/TextNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6DC175B58C2B3C036D22421 /* Shared/Utilities/TextNormalizer.swift */; };
+		B5DCFA11B501BC0A82E1BDBB /* VoiceCardsShare/SharedItemExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4712D1DBA4622B8D176B4818 /* VoiceCardsShare/SharedItemExtractor.swift */; };
+		B5F3FA2C8D5C3536AC48B02E /* Shared/Models/ClipboardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F3785421B7894152CE5B72 /* Shared/Models/ClipboardItem.swift */; };
+		B787E25A642F952F7870E43D /* VoiceCardsTests/ShareItemExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A5EDA60A24607A8CDC1633 /* VoiceCardsTests/ShareItemExtractorTests.swift */; };
+		B8419636CA27129F01BA6735 /* VoiceCardsApp/Resources/Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 4BB5AD04D523E7885BD864D8 /* VoiceCardsApp/Resources/Localizable.xcstrings */; };
+		BB0478F500D098A88C714640 /* Shared/Utilities/RelativeDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8361B901C53EDC97D24EEDA6 /* Shared/Utilities/RelativeDateFormatter.swift */; };
+		BB975C2F5135D8F3047DFA4F /* Shared/Models/CardSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2B040DDA048B054234FFE9 /* Shared/Models/CardSourceType.swift */; };
+		BD8A5F913442D9EC527E5C1E /* Shared/Models/ClipboardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F3785421B7894152CE5B72 /* Shared/Models/ClipboardItem.swift */; };
+		BD9567FA762AC9762D520267 /* Shared/Services/SarvamStreamingTranscriptionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442A1336F640C20ACAA714BD /* Shared/Services/SarvamStreamingTranscriptionClient.swift */; };
+		C2A7639A12AEDD0352932FA2 /* Shared/Utilities/AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CC23D7CB8DF2D0522AB1A7 /* Shared/Utilities/AppGroup.swift */; };
+		C3BDCED8760925EAE037A406 /* YapShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A32F00C867B40797351E108C /* YapShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C41732948F63603F0E868725 /* VoiceCardsTests/AuthSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACAEE5FA0E8B670A0D55152A /* VoiceCardsTests/AuthSessionTests.swift */; };
+		C629FBE4E2CFCAC3334266BB /* Shared/Utilities/TextNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6DC175B58C2B3C036D22421 /* Shared/Utilities/TextNormalizer.swift */; };
+		C65DD78F4BD8344C394A761B /* VoiceCardsUITests/VoiceCardsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C4840CEE82F5AF015BF1CD /* VoiceCardsUITests/VoiceCardsUITests.swift */; };
+		C76B91EF7CBFF6F7C733FC19 /* Shared/Services/SupabaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCF031B2BEB47BB0E914486 /* Shared/Services/SupabaseAuthService.swift */; };
+		CAD694805C9E8D53EA909652 /* Shared/Services/OpenAIWhisperService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 549D326FF0ADCF04145868CF /* Shared/Services/OpenAIWhisperService.swift */; };
+		CBC225B20004C9426B931FED /* Shared/Services/RewriteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B317C7680B2EEFB44D025E7 /* Shared/Services/RewriteService.swift */; };
+		CD92FBEF809218B428C11AD6 /* Shared/Models/BuiltInModes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C5837C2A5E4530FFC2B184 /* Shared/Models/BuiltInModes.swift */; };
+		CFE126A9AFAC73C5C8DBC71F /* Shared/Services/ClipboardAssetStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16D9589D41DF1634BD273E7 /* Shared/Services/ClipboardAssetStore.swift */; };
+		D231C2A0E7EAB07587E1FB47 /* VoiceCardsKeyboard/KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47CF4F567E78529C99FBE2D /* VoiceCardsKeyboard/KeyboardViewController.swift */; };
+		D413D22A27BBF66D5472C672 /* Shared/Models/RewriteMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C67CF6891C8B26F4BDC37B1 /* Shared/Models/RewriteMode.swift */; };
+		D4B02F2E83D3BFAA805EAB1B /* VoiceCardsApp/Onboarding/YapOnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 294F1A0A1712FE4FB3903F5F /* VoiceCardsApp/Onboarding/YapOnboardingFlowView.swift */; };
+		D5153B29A1E5BAAE1100C686 /* VoiceCardsTests/BuiltInModesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177538151864F1ECB6CB0395 /* VoiceCardsTests/BuiltInModesTests.swift */; };
+		D52EF98178B5296A8B2BE3F2 /* VoiceCardsKeyboard/KeyboardCardButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB098DCCE8D4A080B6BC65DB /* VoiceCardsKeyboard/KeyboardCardButton.swift */; };
+		D89F6455E5E044C582DB6E01 /* VoiceCardsApp/Recording/CaptureLatencyTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C88F168D172475293025687A /* VoiceCardsApp/Recording/CaptureLatencyTracker.swift */; };
+		DC5DC6C65B3D954F781C0469 /* VoiceCardsApp/Recording/AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102228AF8B9E490937CA341F /* VoiceCardsApp/Recording/AudioRecorder.swift */; };
+		DE675F0AAB29D28A562740ED /* Shared/Services/ClipboardCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886B7202683B4C8553CFCA70 /* Shared/Services/ClipboardCaptureService.swift */; };
+		DF8C197C2076BF1CD5B786B3 /* Shared/Models/KeyboardDictationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028D3AB22AA7B4A923551734 /* Shared/Models/KeyboardDictationSession.swift */; };
+		E0400CDC6F30F0DB084BA6CE /* VoiceCardsApp/Stream/CardRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859F00A696DBA77CEC6BA495 /* VoiceCardsApp/Stream/CardRow.swift */; };
+		E513B9518667BD369CCAC2B8 /* Shared/Utilities/AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CC23D7CB8DF2D0522AB1A7 /* Shared/Utilities/AppGroup.swift */; };
+		E678EC5E7A10F721CA71D5F6 /* VoiceCardsKeyboard/FullAccessExplainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A198ADD2BAD99A1F804F4C83 /* VoiceCardsKeyboard/FullAccessExplainer.swift */; };
+		E68F8E87AC66B2B2DF89BD8A /* Shared/Models/DictationActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 486481BA327CB72B3C04D7E1 /* Shared/Models/DictationActivityAttributes.swift */; };
+		E943C2930445632A7A728E33 /* VoiceCardsApp/VoiceCardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C725A11D775CEF922363F36 /* VoiceCardsApp/VoiceCardsApp.swift */; };
+		E94421F7CC3E80C0CF684641 /* Shared/Intents/StartKeyboardDictationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF510C9C32F8AD2F177AD382 /* Shared/Intents/StartKeyboardDictationIntent.swift */; };
+		E95E3C6D4F0D1974E96C6F02 /* Shared/Utilities/AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CC23D7CB8DF2D0522AB1A7 /* Shared/Utilities/AppGroup.swift */; };
+		EAE7C27178C3B187D7E5FD07 /* Shared/Persistence/SharedModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BED488633FC7DD14D874856 /* Shared/Persistence/SharedModelContainer.swift */; };
+		EC6B6284F0EB1558FF04CC45 /* Shared/Models/RewriteMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C67CF6891C8B26F4BDC37B1 /* Shared/Models/RewriteMode.swift */; };
+		EE302F6542613D954859A192 /* YapLiveActivity.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = FF71BCB6CCB89E970A84040F /* YapLiveActivity.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F0F8374B540186EB1B719493 /* Shared/Services/ClipboardCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886B7202683B4C8553CFCA70 /* Shared/Services/ClipboardCaptureService.swift */; };
+		F1150CE13ECCE977C0F9E47E /* VoiceCardsApp/Modes/ModeEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D225734C685B6AC63EC80E6F /* VoiceCardsApp/Modes/ModeEditorView.swift */; };
+		F1C7E0E9B2300A1DDF3DF0AB /* VoiceCardsApp/Intents/PasteLastCardIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBC704CD0229B990561896FB /* VoiceCardsApp/Intents/PasteLastCardIntent.swift */; };
+		F2F12B5D8B9C767DEC033D9F /* VoiceCardsApp/Stream/StreamModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6EBB9E36560F62D508C2E4 /* VoiceCardsApp/Stream/StreamModel.swift */; };
+		F359990C6E19D6DC402969C4 /* Shared/Utilities/ClipboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07B9382A21FA2E8E7C72A02A /* Shared/Utilities/ClipboardWriter.swift */; };
+		F58069DB12E5C0F726EE9EF0 /* Shared/Utilities/TextNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6DC175B58C2B3C036D22421 /* Shared/Utilities/TextNormalizer.swift */; };
+		F62242A67DEC576657219D71 /* Shared/Models/Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE8197DB36F4CE8534FCFD9 /* Shared/Models/Card.swift */; };
+		F7D17CF6EA0AC20B3046DB4D /* Shared/Security/AuthSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74BC3D3AA497062906F86F4E /* Shared/Security/AuthSessionStore.swift */; };
+		FAD500811DDA7FE39CE5EB48 /* Shared/Security/KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503EE3B78B3B9D1F44F56407 /* Shared/Security/KeychainStore.swift */; };
+		FD0ECA4334F8444E10D94A5B /* Shared/Models/PendingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FEA0474ABF5E8472C3B174 /* Shared/Models/PendingOperation.swift */; };
+		FD1000010000000000000001 /* Shared/UI/YapDesignFoundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1000010000000000000000 /* Shared/UI/YapDesignFoundation.swift */; };
+		FD1000010000000000000002 /* Shared/UI/YapDesignFoundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1000010000000000000000 /* Shared/UI/YapDesignFoundation.swift */; };
+		FD2000010000000000000001 /* Shared/PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FD2000010000000000000000 /* Shared/PrivacyInfo.xcprivacy */; };
+		FD2000010000000000000002 /* Shared/PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FD2000010000000000000000 /* Shared/PrivacyInfo.xcprivacy */; };
+		FD2000010000000000000003 /* Shared/PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FD2000010000000000000000 /* Shared/PrivacyInfo.xcprivacy */; };
+		FE7BAE6BCD1A80CA090603E2 /* VoiceCardsTests/CardRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A5BC9D91E66B719BFDEAAC /* VoiceCardsTests/CardRepositoryTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3FA8EC41056B7B1FB0FE439F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A51C911AAB1BAC5DDC16AC53;
+			remoteInfo = VoiceCardsLiveActivity;
+		};
+		512EA337EBCFB0A7FCC3AA52 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 400C1A3DBC46907F419FC948;
+			remoteInfo = VoiceCardsApp;
+		};
+		A3E83AF6A1669FF7A208027C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CB5AC31C3E1CE8F03D4A7D0D;
+			remoteInfo = VoiceCardsKeyboard;
+		};
+		D6D528A53A7F863B8CF061C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A893585BDBC95FC6AB56EF1;
+			remoteInfo = VoiceCardsShare;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F0AB04EE052351C80F3286E9 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A4F973E765804FB5B8132EF4 /* YapKeyboard.appex in Embed App Extensions */,
+				C3BDCED8760925EAE037A406 /* YapShare.appex in Embed App Extensions */,
+				EE302F6542613D954859A192 /* YapLiveActivity.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		028D3AB22AA7B4A923551734 /* Shared/Models/KeyboardDictationSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Models/KeyboardDictationSession.swift; sourceTree = "<group>"; };
+		029D77206FDC28C109C6F0DB /* Shared/Persistence/PersonalLexiconRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Persistence/PersonalLexiconRepository.swift; sourceTree = "<group>"; };
+		04F5CC5CBC954826F2C831E4 /* Shared/Services/NetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/NetworkClient.swift; sourceTree = "<group>"; };
+		06A5EDA60A24607A8CDC1633 /* VoiceCardsTests/ShareItemExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsTests/ShareItemExtractorTests.swift; sourceTree = "<group>"; };
+		07B9382A21FA2E8E7C72A02A /* Shared/Utilities/ClipboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Utilities/ClipboardWriter.swift; sourceTree = "<group>"; };
+		07C5837C2A5E4530FFC2B184 /* Shared/Models/BuiltInModes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Models/BuiltInModes.swift; sourceTree = "<group>"; };
+		08BC22E0AEDA70F359808F74 /* VoiceCardsKeyboard/KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsKeyboard/KeyboardView.swift; sourceTree = "<group>"; };
+		09A5BC9D91E66B719BFDEAAC /* VoiceCardsTests/CardRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsTests/CardRepositoryTests.swift; sourceTree = "<group>"; };
+		0AD94689462D2138A08094CC /* Shared/Services/RetryQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/RetryQueue.swift; sourceTree = "<group>"; };
+		0B4C48523F37E0821C6E13E7 /* Shared/Services/TitleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/TitleService.swift; sourceTree = "<group>"; };
+		0BED488633FC7DD14D874856 /* Shared/Persistence/SharedModelContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Persistence/SharedModelContainer.swift; sourceTree = "<group>"; };
+		0DF65049F85EA5E9AF023A7E /* VoiceCardsTests/ServiceResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsTests/ServiceResponseTests.swift; sourceTree = "<group>"; };
+		102228AF8B9E490937CA341F /* VoiceCardsApp/Recording/AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Recording/AudioRecorder.swift; sourceTree = "<group>"; };
+		1376929269A770D5393BAD9F /* VoiceCardsKeyboard/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = VoiceCardsKeyboard/Info.plist; sourceTree = "<group>"; };
+		13B7A02056053CAEC66BB19E /* VoiceCardsTests/KeyboardModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsTests/KeyboardModelTests.swift; sourceTree = "<group>"; };
+		14C4840CEE82F5AF015BF1CD /* VoiceCardsUITests/VoiceCardsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsUITests/VoiceCardsUITests.swift; sourceTree = "<group>"; };
+		177538151864F1ECB6CB0395 /* VoiceCardsTests/BuiltInModesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsTests/BuiltInModesTests.swift; sourceTree = "<group>"; };
+		1F6EBB9E36560F62D508C2E4 /* VoiceCardsApp/Stream/StreamModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Stream/StreamModel.swift; sourceTree = "<group>"; };
+		234E4C5BDB64D1BDC9F77D40 /* VoiceCardsApp/Search/SearchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Search/SearchModel.swift; sourceTree = "<group>"; };
+		24B601D392DE920D323598CF /* YapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YapUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		258087E5B86A88CB5224E868 /* VoiceCardsApp/Stream/CardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Stream/CardDetailView.swift; sourceTree = "<group>"; };
+		294F1A0A1712FE4FB3903F5F /* VoiceCardsApp/Onboarding/YapOnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Onboarding/YapOnboardingFlowView.swift; sourceTree = "<group>"; };
+		2B7534EE5D1AF092580684E8 /* Shared/UI/CardPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/UI/CardPreview.swift; sourceTree = "<group>"; };
+		2D8AC82BF1CECDFEB6BF73A9 /* VoiceCardsLiveActivity/VoiceCardsDictationActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsLiveActivity/VoiceCardsDictationActivity.swift; sourceTree = "<group>"; };
+		33D4B04A74411291300CBB11 /* VoiceCardsApp/Intents/VoiceCardsShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Intents/VoiceCardsShortcuts.swift; sourceTree = "<group>"; };
+		35819F2254C635A218A7F89E /* VoiceCardsKeyboard/KeyboardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsKeyboard/KeyboardModel.swift; sourceTree = "<group>"; };
+		3B235AF11282BACFDF0A2827 /* VoiceCardsApp/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = VoiceCardsApp/Info.plist; sourceTree = "<group>"; };
+		3C725A11D775CEF922363F36 /* VoiceCardsApp/VoiceCardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/VoiceCardsApp.swift; sourceTree = "<group>"; };
+		3DFEC354B5826C9433AA2DFE /* VoiceCardsApp/Onboarding/YapDesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Onboarding/YapDesignSystem.swift; sourceTree = "<group>"; };
+		3ECF0943B1C373286200A9F3 /* VoiceCardsApp/Auth/AuthGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Auth/AuthGateView.swift; sourceTree = "<group>"; };
+		442A1336F640C20ACAA714BD /* Shared/Services/SarvamStreamingTranscriptionClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/SarvamStreamingTranscriptionClient.swift; sourceTree = "<group>"; };
+		4712D1DBA4622B8D176B4818 /* VoiceCardsShare/SharedItemExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsShare/SharedItemExtractor.swift; sourceTree = "<group>"; };
+		486481BA327CB72B3C04D7E1 /* Shared/Models/DictationActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Models/DictationActivityAttributes.swift; sourceTree = "<group>"; };
+		4B2BB64F64757B2F54384EFB /* VoiceCardsApp/Clipboard/ClipboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Clipboard/ClipboardView.swift; sourceTree = "<group>"; };
+		4BB5AD04D523E7885BD864D8 /* VoiceCardsApp/Resources/Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = VoiceCardsApp/Resources/Localizable.xcstrings; sourceTree = "<group>"; };
+		4C29A0865B1BE6D234B50E9C /* VoiceCardsShare/VoiceCardsShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = VoiceCardsShare/VoiceCardsShare.entitlements; sourceTree = "<group>"; };
+		501B560CFD21CFA4AF27324F /* VoiceCardsTests/RecordingSessionModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsTests/RecordingSessionModelTests.swift; sourceTree = "<group>"; };
+		5029364991BB546F04F85B05 /* Shared/Services/RomanScriptNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/RomanScriptNormalizer.swift; sourceTree = "<group>"; };
+		503EE3B78B3B9D1F44F56407 /* Shared/Security/KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Security/KeychainStore.swift; sourceTree = "<group>"; };
+		5185E672554F5F092A24E81C /* Shared/Services/FallbackTranscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/FallbackTranscriptionService.swift; sourceTree = "<group>"; };
+		549D326FF0ADCF04145868CF /* Shared/Services/OpenAIWhisperService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/OpenAIWhisperService.swift; sourceTree = "<group>"; };
+		57E35338C018560C77980467 /* VoiceCardsLiveActivity/VoiceCardsLiveActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsLiveActivity/VoiceCardsLiveActivityBundle.swift; sourceTree = "<group>"; };
+		59318A9F653DD58F42BA0A07 /* VoiceCardsShare/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = VoiceCardsShare/Info.plist; sourceTree = "<group>"; };
+		59A8D1217046E42671FF5820 /* Shared/Services/SupabaseTranscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/SupabaseTranscriptionService.swift; sourceTree = "<group>"; };
+		60665C5F8CAD9846DFDA030F /* VoiceCardsApp/AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/AppModel.swift; sourceTree = "<group>"; };
+		63E18F79C4EA3D0DB007A272 /* VoiceCardsKeyboard/KeyboardClipboardButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsKeyboard/KeyboardClipboardButton.swift; sourceTree = "<group>"; };
+		66F3785421B7894152CE5B72 /* Shared/Models/ClipboardItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Models/ClipboardItem.swift; sourceTree = "<group>"; };
+		68CC23D7CB8DF2D0522AB1A7 /* Shared/Utilities/AppGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Utilities/AppGroup.swift; sourceTree = "<group>"; };
+		69FEA0474ABF5E8472C3B174 /* Shared/Models/PendingOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Models/PendingOperation.swift; sourceTree = "<group>"; };
+		6B317C7680B2EEFB44D025E7 /* Shared/Services/RewriteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/RewriteService.swift; sourceTree = "<group>"; };
+		70BE200C289205940A538036 /* VoiceCardsKeyboard/VoiceCardsKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = VoiceCardsKeyboard/VoiceCardsKeyboard.entitlements; sourceTree = "<group>"; };
+		74BC3D3AA497062906F86F4E /* Shared/Security/AuthSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Security/AuthSessionStore.swift; sourceTree = "<group>"; };
+		7638BBE98558310ACDD7E6C4 /* VoiceCardsApp/VoiceCards.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = VoiceCardsApp/VoiceCards.entitlements; sourceTree = "<group>"; };
+		7A6C871611954C3F1C0CE53F /* VoiceCardsApp/Resources/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = VoiceCardsApp/Resources/Assets.xcassets; sourceTree = "<group>"; };
+		7AC05354D4EE235BA3AD2DB4 /* Shared/Services/NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/NetworkMonitor.swift; sourceTree = "<group>"; };
+		7DCF031B2BEB47BB0E914486 /* Shared/Services/SupabaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/SupabaseAuthService.swift; sourceTree = "<group>"; };
+		806F0DB1775D6A7BC4BEE0C4 /* Configuration/Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Shared.xcconfig; sourceTree = "<group>"; };
+		816E70CD4D7630850AB124EC /* Shared/Models/PersonalTerm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Models/PersonalTerm.swift; sourceTree = "<group>"; };
+		8361B901C53EDC97D24EEDA6 /* Shared/Utilities/RelativeDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Utilities/RelativeDateFormatter.swift; sourceTree = "<group>"; };
+		85330A283557DD4BCC1BFFDB /* VoiceCardsLiveActivity/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = VoiceCardsLiveActivity/Info.plist; sourceTree = "<group>"; };
+		859F00A696DBA77CEC6BA495 /* VoiceCardsApp/Stream/CardRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Stream/CardRow.swift; sourceTree = "<group>"; };
+		866898FAF2BDF0F7F23364A7 /* Shared/Services/TranscriptEnhancementPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/TranscriptEnhancementPrompt.swift; sourceTree = "<group>"; };
+		88622F39318AA3E760965E3E /* Shared/Services/SarvamSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/SarvamSpeechService.swift; sourceTree = "<group>"; };
+		886B7202683B4C8553CFCA70 /* Shared/Services/ClipboardCaptureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/ClipboardCaptureService.swift; sourceTree = "<group>"; };
+		8C67CF6891C8B26F4BDC37B1 /* Shared/Models/RewriteMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Models/RewriteMode.swift; sourceTree = "<group>"; };
+		8C811CCAD90E206E28676290 /* Shared/Services/AnthropicRewriteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/AnthropicRewriteService.swift; sourceTree = "<group>"; };
+		8CAC41841E1DE1A75C8E1C0A /* VoiceCardsApp/Recording/RecordingSessionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Recording/RecordingSessionModel.swift; sourceTree = "<group>"; };
+		915B9C45A2F550F9D7C4D0E1 /* VoiceCardsApp/Clipboard/ClipboardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Clipboard/ClipboardModel.swift; sourceTree = "<group>"; };
+		93EBF77B3EBEAB86090D1574 /* Shared/Utilities/AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Utilities/AppPreferences.swift; sourceTree = "<group>"; };
+		972D5D172074ECD07AA0D7A6 /* VoiceCardsApp/Stream/StreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Stream/StreamView.swift; sourceTree = "<group>"; };
+		9763D03DD43C563569CE783B /* Shared/Persistence/ClipboardRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Persistence/ClipboardRepository.swift; sourceTree = "<group>"; };
+		98575CDA93FEC634774ADADC /* Yap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yap.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		988869AE8F8CE5F8A50225C2 /* Shared/Services/SupabaseConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/SupabaseConfiguration.swift; sourceTree = "<group>"; };
+		99A032FBA4AD6DCAB0B70592 /* VoiceCardsApp/Recording/RewriteComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Recording/RewriteComparisonView.swift; sourceTree = "<group>"; };
+		9A2B040DDA048B054234FFE9 /* Shared/Models/CardSourceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Models/CardSourceType.swift; sourceTree = "<group>"; };
+		9D79E46B84FB4B72A9A6C312 /* VoiceCardsKeyboard/Resources/KeyboardAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = VoiceCardsKeyboard/Resources/KeyboardAssets.xcassets; sourceTree = "<group>"; };
+		A198ADD2BAD99A1F804F4C83 /* VoiceCardsKeyboard/FullAccessExplainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsKeyboard/FullAccessExplainer.swift; sourceTree = "<group>"; };
+		A32F00C867B40797351E108C /* YapShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = YapShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A59FBFF43BDC863E0F26F8AC /* Shared/Services/HistoryRetentionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/HistoryRetentionService.swift; sourceTree = "<group>"; };
+		A7CE0062B142897A213AAA61 /* VoiceCardsApp/Settings/KeyboardSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Settings/KeyboardSetupView.swift; sourceTree = "<group>"; };
+		ACAEE5FA0E8B670A0D55152A /* VoiceCardsTests/AuthSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsTests/AuthSessionTests.swift; sourceTree = "<group>"; };
+		B26EACF8049257F73B67D4C9 /* Shared/Services/VernacularTranscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/VernacularTranscriptionService.swift; sourceTree = "<group>"; };
+		B5DAC9DF8A40EF964BD0D7AD /* Configuration/Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Debug.xcconfig; sourceTree = "<group>"; };
+		B8DC952719D91F3152B2454E /* Shared/Services/TranscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/TranscriptionService.swift; sourceTree = "<group>"; };
+		BBC704CD0229B990561896FB /* VoiceCardsApp/Intents/PasteLastCardIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Intents/PasteLastCardIntent.swift; sourceTree = "<group>"; };
+		BF510C9C32F8AD2F177AD382 /* Shared/Intents/StartKeyboardDictationIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Intents/StartKeyboardDictationIntent.swift; sourceTree = "<group>"; };
+		C47CF4F567E78529C99FBE2D /* VoiceCardsKeyboard/KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsKeyboard/KeyboardViewController.swift; sourceTree = "<group>"; };
+		C47E71645DBE929FE0B998FD /* VoiceCardsApp/Settings/SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Settings/SettingsView.swift; sourceTree = "<group>"; };
+		C64E2D0CBF5685D01E34E3E5 /* VoiceCardsApp/Modes/ModesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Modes/ModesModel.swift; sourceTree = "<group>"; };
+		C88F168D172475293025687A /* VoiceCardsApp/Recording/CaptureLatencyTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Recording/CaptureLatencyTracker.swift; sourceTree = "<group>"; };
+		CA083DE9065CDD113527956E /* Configuration/Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration/Release.xcconfig; sourceTree = "<group>"; };
+		CA7B433E4437FF4318567771 /* VoiceCardsApp/Settings/SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Settings/SettingsModel.swift; sourceTree = "<group>"; };
+		CB8BFE20E711608AB657E2B5 /* Shared/Services/RetryProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/RetryProcessor.swift; sourceTree = "<group>"; };
+		CCEF6E1F32B97E91D211A72A /* Shared/Services/DeepSeekRewriteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/DeepSeekRewriteService.swift; sourceTree = "<group>"; };
+		CE4BBEDA7B509EC5BBB4CEDD /* Shared/Utilities/AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Utilities/AppRoute.swift; sourceTree = "<group>"; };
+		CE747BFE592F5B6CCB0A0218 /* Shared/UI/ModeChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/UI/ModeChip.swift; sourceTree = "<group>"; };
+		D225734C685B6AC63EC80E6F /* VoiceCardsApp/Modes/ModeEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Modes/ModeEditorView.swift; sourceTree = "<group>"; };
+		D2AABB1C18B7B598D6B58078 /* Shared/Services/OnDeviceSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/OnDeviceSpeechService.swift; sourceTree = "<group>"; };
+		D65DE3913C3684D15CE20139 /* VoiceCardsApp/Recording/DictationLiveActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Recording/DictationLiveActivityController.swift; sourceTree = "<group>"; };
+		D74BDE155F8650B2D7D45258 /* Shared/Services/SelectedRewriteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/SelectedRewriteService.swift; sourceTree = "<group>"; };
+		D8E77A3E3D60A74AC5CD73F4 /* Shared/Security/APIKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Security/APIKeyStore.swift; sourceTree = "<group>"; };
+		DE15FA3B900CAED90BE81736 /* Shared/Persistence/CardRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Persistence/CardRepository.swift; sourceTree = "<group>"; };
+		E128C52087BC1D2575055E2B /* VoiceCardsApp/Search/SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Search/SearchView.swift; sourceTree = "<group>"; };
+		E16D9589D41DF1634BD273E7 /* Shared/Services/ClipboardAssetStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/ClipboardAssetStore.swift; sourceTree = "<group>"; };
+		E2F5C658E6C8A08235070D93 /* VoiceCardsApp/RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/RootView.swift; sourceTree = "<group>"; };
+		E49348A2DCE6E68561F9B328 /* VoiceCardsApp/Recording/WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Recording/WaveformView.swift; sourceTree = "<group>"; };
+		E5324D137EE26826A8686661 /* Shared/Models/AuthSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Models/AuthSession.swift; sourceTree = "<group>"; };
+		E8AF1A031574DDAB63B96FD3 /* VoiceCardsApp/Modes/ModesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Modes/ModesView.swift; sourceTree = "<group>"; };
+		E8EE2214AB6BB4821DD9D6CF /* YapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E957C3426538EF832B1CEADA /* VoiceCardsApp/Auth/AuthModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Auth/AuthModel.swift; sourceTree = "<group>"; };
+		EB098DCCE8D4A080B6BC65DB /* VoiceCardsKeyboard/KeyboardCardButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsKeyboard/KeyboardCardButton.swift; sourceTree = "<group>"; };
+		EC82937F2B6619155BE7FC37 /* VoiceCardsShare/ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsShare/ShareViewController.swift; sourceTree = "<group>"; };
+		ECE8197DB36F4CE8534FCFD9 /* Shared/Models/Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Models/Card.swift; sourceTree = "<group>"; };
+		F23B0851692B9D2AB7858E0C /* Shared/Services/SupabaseRewriteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Services/SupabaseRewriteService.swift; sourceTree = "<group>"; };
+		F4A3DE315A1776FE94B0EFBD /* Shared/Persistence/ModeRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Persistence/ModeRepository.swift; sourceTree = "<group>"; };
+		F6DC175B58C2B3C036D22421 /* Shared/Utilities/TextNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Utilities/TextNormalizer.swift; sourceTree = "<group>"; };
+		F6F55F084068019D875435AF /* VoiceCardsTests/ClipboardHistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsTests/ClipboardHistoryTests.swift; sourceTree = "<group>"; };
+		F916279A6880EFDDC154EE79 /* YapKeyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = YapKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		FBA1E939DA13390BD008CBD0 /* VoiceCardsShare/ShareConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsShare/ShareConfirmationView.swift; sourceTree = "<group>"; };
+		FD1000010000000000000000 /* Shared/UI/YapDesignFoundation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/UI/YapDesignFoundation.swift; sourceTree = "<group>"; };
+		FD2000010000000000000000 /* Shared/PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Shared/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		FD73E222674DCB83994D8A6D /* VoiceCardsApp/Recording/CaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCardsApp/Recording/CaptureView.swift; sourceTree = "<group>"; };
+		FF71BCB6CCB89E970A84040F /* YapLiveActivity.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = YapLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5CCCA366CB504B4F66266E74 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8699936760AED4E4E24AADD3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAA3E12B4B40F3DFC6FE42F3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C8190CD118465EFBDF9F9843 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E368F7BFA95B9CE04293D453 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E7A42981866009DDEA9F853D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		00C45FD35CB0F9C5F764F070 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				98575CDA93FEC634774ADADC /* Yap.app */,
+				F916279A6880EFDDC154EE79 /* YapKeyboard.appex */,
+				A32F00C867B40797351E108C /* YapShare.appex */,
+				FF71BCB6CCB89E970A84040F /* YapLiveActivity.appex */,
+				E8EE2214AB6BB4821DD9D6CF /* YapTests.xctest */,
+				24B601D392DE920D323598CF /* YapUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		ADCF10F76EBF2A74473E9DC4 = {
+			isa = PBXGroup;
+			children = (
+				BF510C9C32F8AD2F177AD382 /* Shared/Intents/StartKeyboardDictationIntent.swift */,
+				E5324D137EE26826A8686661 /* Shared/Models/AuthSession.swift */,
+				07C5837C2A5E4530FFC2B184 /* Shared/Models/BuiltInModes.swift */,
+				ECE8197DB36F4CE8534FCFD9 /* Shared/Models/Card.swift */,
+				9A2B040DDA048B054234FFE9 /* Shared/Models/CardSourceType.swift */,
+				66F3785421B7894152CE5B72 /* Shared/Models/ClipboardItem.swift */,
+				486481BA327CB72B3C04D7E1 /* Shared/Models/DictationActivityAttributes.swift */,
+				028D3AB22AA7B4A923551734 /* Shared/Models/KeyboardDictationSession.swift */,
+				69FEA0474ABF5E8472C3B174 /* Shared/Models/PendingOperation.swift */,
+				816E70CD4D7630850AB124EC /* Shared/Models/PersonalTerm.swift */,
+				8C67CF6891C8B26F4BDC37B1 /* Shared/Models/RewriteMode.swift */,
+				DE15FA3B900CAED90BE81736 /* Shared/Persistence/CardRepository.swift */,
+				9763D03DD43C563569CE783B /* Shared/Persistence/ClipboardRepository.swift */,
+				F4A3DE315A1776FE94B0EFBD /* Shared/Persistence/ModeRepository.swift */,
+				029D77206FDC28C109C6F0DB /* Shared/Persistence/PersonalLexiconRepository.swift */,
+				0BED488633FC7DD14D874856 /* Shared/Persistence/SharedModelContainer.swift */,
+				D8E77A3E3D60A74AC5CD73F4 /* Shared/Security/APIKeyStore.swift */,
+				74BC3D3AA497062906F86F4E /* Shared/Security/AuthSessionStore.swift */,
+				503EE3B78B3B9D1F44F56407 /* Shared/Security/KeychainStore.swift */,
+				8C811CCAD90E206E28676290 /* Shared/Services/AnthropicRewriteService.swift */,
+				E16D9589D41DF1634BD273E7 /* Shared/Services/ClipboardAssetStore.swift */,
+				886B7202683B4C8553CFCA70 /* Shared/Services/ClipboardCaptureService.swift */,
+				CCEF6E1F32B97E91D211A72A /* Shared/Services/DeepSeekRewriteService.swift */,
+				5185E672554F5F092A24E81C /* Shared/Services/FallbackTranscriptionService.swift */,
+				A59FBFF43BDC863E0F26F8AC /* Shared/Services/HistoryRetentionService.swift */,
+				04F5CC5CBC954826F2C831E4 /* Shared/Services/NetworkClient.swift */,
+				7AC05354D4EE235BA3AD2DB4 /* Shared/Services/NetworkMonitor.swift */,
+				D2AABB1C18B7B598D6B58078 /* Shared/Services/OnDeviceSpeechService.swift */,
+				549D326FF0ADCF04145868CF /* Shared/Services/OpenAIWhisperService.swift */,
+				CB8BFE20E711608AB657E2B5 /* Shared/Services/RetryProcessor.swift */,
+				0AD94689462D2138A08094CC /* Shared/Services/RetryQueue.swift */,
+				6B317C7680B2EEFB44D025E7 /* Shared/Services/RewriteService.swift */,
+				5029364991BB546F04F85B05 /* Shared/Services/RomanScriptNormalizer.swift */,
+				88622F39318AA3E760965E3E /* Shared/Services/SarvamSpeechService.swift */,
+				442A1336F640C20ACAA714BD /* Shared/Services/SarvamStreamingTranscriptionClient.swift */,
+				D74BDE155F8650B2D7D45258 /* Shared/Services/SelectedRewriteService.swift */,
+				7DCF031B2BEB47BB0E914486 /* Shared/Services/SupabaseAuthService.swift */,
+				988869AE8F8CE5F8A50225C2 /* Shared/Services/SupabaseConfiguration.swift */,
+				F23B0851692B9D2AB7858E0C /* Shared/Services/SupabaseRewriteService.swift */,
+				59A8D1217046E42671FF5820 /* Shared/Services/SupabaseTranscriptionService.swift */,
+				0B4C48523F37E0821C6E13E7 /* Shared/Services/TitleService.swift */,
+				866898FAF2BDF0F7F23364A7 /* Shared/Services/TranscriptEnhancementPrompt.swift */,
+				B8DC952719D91F3152B2454E /* Shared/Services/TranscriptionService.swift */,
+				B26EACF8049257F73B67D4C9 /* Shared/Services/VernacularTranscriptionService.swift */,
+				2B7534EE5D1AF092580684E8 /* Shared/UI/CardPreview.swift */,
+				CE747BFE592F5B6CCB0A0218 /* Shared/UI/ModeChip.swift */,
+				FD1000010000000000000000 /* Shared/UI/YapDesignFoundation.swift */,
+				FD2000010000000000000000 /* Shared/PrivacyInfo.xcprivacy */,
+				68CC23D7CB8DF2D0522AB1A7 /* Shared/Utilities/AppGroup.swift */,
+				93EBF77B3EBEAB86090D1574 /* Shared/Utilities/AppPreferences.swift */,
+				CE4BBEDA7B509EC5BBB4CEDD /* Shared/Utilities/AppRoute.swift */,
+				07B9382A21FA2E8E7C72A02A /* Shared/Utilities/ClipboardWriter.swift */,
+				8361B901C53EDC97D24EEDA6 /* Shared/Utilities/RelativeDateFormatter.swift */,
+				F6DC175B58C2B3C036D22421 /* Shared/Utilities/TextNormalizer.swift */,
+				60665C5F8CAD9846DFDA030F /* VoiceCardsApp/AppModel.swift */,
+				3ECF0943B1C373286200A9F3 /* VoiceCardsApp/Auth/AuthGateView.swift */,
+				E957C3426538EF832B1CEADA /* VoiceCardsApp/Auth/AuthModel.swift */,
+				915B9C45A2F550F9D7C4D0E1 /* VoiceCardsApp/Clipboard/ClipboardModel.swift */,
+				4B2BB64F64757B2F54384EFB /* VoiceCardsApp/Clipboard/ClipboardView.swift */,
+				BBC704CD0229B990561896FB /* VoiceCardsApp/Intents/PasteLastCardIntent.swift */,
+				33D4B04A74411291300CBB11 /* VoiceCardsApp/Intents/VoiceCardsShortcuts.swift */,
+				D225734C685B6AC63EC80E6F /* VoiceCardsApp/Modes/ModeEditorView.swift */,
+				C64E2D0CBF5685D01E34E3E5 /* VoiceCardsApp/Modes/ModesModel.swift */,
+				E8AF1A031574DDAB63B96FD3 /* VoiceCardsApp/Modes/ModesView.swift */,
+				3DFEC354B5826C9433AA2DFE /* VoiceCardsApp/Onboarding/YapDesignSystem.swift */,
+				294F1A0A1712FE4FB3903F5F /* VoiceCardsApp/Onboarding/YapOnboardingFlowView.swift */,
+				102228AF8B9E490937CA341F /* VoiceCardsApp/Recording/AudioRecorder.swift */,
+				C88F168D172475293025687A /* VoiceCardsApp/Recording/CaptureLatencyTracker.swift */,
+				FD73E222674DCB83994D8A6D /* VoiceCardsApp/Recording/CaptureView.swift */,
+				D65DE3913C3684D15CE20139 /* VoiceCardsApp/Recording/DictationLiveActivityController.swift */,
+				8CAC41841E1DE1A75C8E1C0A /* VoiceCardsApp/Recording/RecordingSessionModel.swift */,
+				99A032FBA4AD6DCAB0B70592 /* VoiceCardsApp/Recording/RewriteComparisonView.swift */,
+				E49348A2DCE6E68561F9B328 /* VoiceCardsApp/Recording/WaveformView.swift */,
+				7A6C871611954C3F1C0CE53F /* VoiceCardsApp/Resources/Assets.xcassets */,
+				9D79E46B84FB4B72A9A6C312 /* VoiceCardsKeyboard/Resources/KeyboardAssets.xcassets */,
+				4BB5AD04D523E7885BD864D8 /* VoiceCardsApp/Resources/Localizable.xcstrings */,
+				E2F5C658E6C8A08235070D93 /* VoiceCardsApp/RootView.swift */,
+				234E4C5BDB64D1BDC9F77D40 /* VoiceCardsApp/Search/SearchModel.swift */,
+				E128C52087BC1D2575055E2B /* VoiceCardsApp/Search/SearchView.swift */,
+				A7CE0062B142897A213AAA61 /* VoiceCardsApp/Settings/KeyboardSetupView.swift */,
+				CA7B433E4437FF4318567771 /* VoiceCardsApp/Settings/SettingsModel.swift */,
+				C47E71645DBE929FE0B998FD /* VoiceCardsApp/Settings/SettingsView.swift */,
+				258087E5B86A88CB5224E868 /* VoiceCardsApp/Stream/CardDetailView.swift */,
+				859F00A696DBA77CEC6BA495 /* VoiceCardsApp/Stream/CardRow.swift */,
+				1F6EBB9E36560F62D508C2E4 /* VoiceCardsApp/Stream/StreamModel.swift */,
+				972D5D172074ECD07AA0D7A6 /* VoiceCardsApp/Stream/StreamView.swift */,
+				3C725A11D775CEF922363F36 /* VoiceCardsApp/VoiceCardsApp.swift */,
+				A198ADD2BAD99A1F804F4C83 /* VoiceCardsKeyboard/FullAccessExplainer.swift */,
+				EB098DCCE8D4A080B6BC65DB /* VoiceCardsKeyboard/KeyboardCardButton.swift */,
+				63E18F79C4EA3D0DB007A272 /* VoiceCardsKeyboard/KeyboardClipboardButton.swift */,
+				35819F2254C635A218A7F89E /* VoiceCardsKeyboard/KeyboardModel.swift */,
+				08BC22E0AEDA70F359808F74 /* VoiceCardsKeyboard/KeyboardView.swift */,
+				C47CF4F567E78529C99FBE2D /* VoiceCardsKeyboard/KeyboardViewController.swift */,
+				2D8AC82BF1CECDFEB6BF73A9 /* VoiceCardsLiveActivity/VoiceCardsDictationActivity.swift */,
+				57E35338C018560C77980467 /* VoiceCardsLiveActivity/VoiceCardsLiveActivityBundle.swift */,
+				FBA1E939DA13390BD008CBD0 /* VoiceCardsShare/ShareConfirmationView.swift */,
+				EC82937F2B6619155BE7FC37 /* VoiceCardsShare/ShareViewController.swift */,
+				4712D1DBA4622B8D176B4818 /* VoiceCardsShare/SharedItemExtractor.swift */,
+				ACAEE5FA0E8B670A0D55152A /* VoiceCardsTests/AuthSessionTests.swift */,
+				177538151864F1ECB6CB0395 /* VoiceCardsTests/BuiltInModesTests.swift */,
+				09A5BC9D91E66B719BFDEAAC /* VoiceCardsTests/CardRepositoryTests.swift */,
+				F6F55F084068019D875435AF /* VoiceCardsTests/ClipboardHistoryTests.swift */,
+				13B7A02056053CAEC66BB19E /* VoiceCardsTests/KeyboardModelTests.swift */,
+				501B560CFD21CFA4AF27324F /* VoiceCardsTests/RecordingSessionModelTests.swift */,
+				0DF65049F85EA5E9AF023A7E /* VoiceCardsTests/ServiceResponseTests.swift */,
+				06A5EDA60A24607A8CDC1633 /* VoiceCardsTests/ShareItemExtractorTests.swift */,
+				14C4840CEE82F5AF015BF1CD /* VoiceCardsUITests/VoiceCardsUITests.swift */,
+				B5DAC9DF8A40EF964BD0D7AD /* Configuration/Debug.xcconfig */,
+				CA083DE9065CDD113527956E /* Configuration/Release.xcconfig */,
+				806F0DB1775D6A7BC4BEE0C4 /* Configuration/Shared.xcconfig */,
+				3B235AF11282BACFDF0A2827 /* VoiceCardsApp/Info.plist */,
+				7638BBE98558310ACDD7E6C4 /* VoiceCardsApp/VoiceCards.entitlements */,
+				1376929269A770D5393BAD9F /* VoiceCardsKeyboard/Info.plist */,
+				70BE200C289205940A538036 /* VoiceCardsKeyboard/VoiceCardsKeyboard.entitlements */,
+				59318A9F653DD58F42BA0A07 /* VoiceCardsShare/Info.plist */,
+				4C29A0865B1BE6D234B50E9C /* VoiceCardsShare/VoiceCardsShare.entitlements */,
+				85330A283557DD4BCC1BFFDB /* VoiceCardsLiveActivity/Info.plist */,
+				00C45FD35CB0F9C5F764F070 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1545FC27B4C5038884946FDE /* YapUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10575C6E538AA42DD2A6145 /* Build configuration list for PBXNativeTarget "YapUITests" */;
+			buildPhases = (
+				377C3D824C421FB74CDB4864 /* Sources */,
+				C8190CD118465EFBDF9F9843 /* Frameworks */,
+				C5E33D0FFC6F861CB81357D3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				80644B5736C0B6800ECB2364 /* PBXTargetDependency */,
+			);
+			name = YapUITests;
+			productName = VoiceCardsUITests;
+			productReference = 24B601D392DE920D323598CF /* YapUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		400C1A3DBC46907F419FC948 /* YapApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 34ACE1EDF516FDE9CC9A55AE /* Build configuration list for PBXNativeTarget "YapApp" */;
+			buildPhases = (
+				5C011C54B345A21D0C64F000 /* Sources */,
+				5CCCA366CB504B4F66266E74 /* Frameworks */,
+				60CDC4D647E62F029EEDE59F /* Resources */,
+				F0AB04EE052351C80F3286E9 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B51F7D0F061BE009A0BFA9DC /* PBXTargetDependency */,
+				2699FD12DEADC943EA794B30 /* PBXTargetDependency */,
+				1ED33B47B8CD4D33FC0DAF99 /* PBXTargetDependency */,
+			);
+			name = YapApp;
+			productName = VoiceCardsApp;
+			productReference = 98575CDA93FEC634774ADADC /* Yap.app */;
+			productType = "com.apple.product-type.application";
+		};
+		41F71EAC1D32B36C8714C712 /* YapTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 782BE8967B02EA128ACB78EA /* Build configuration list for PBXNativeTarget "YapTests" */;
+			buildPhases = (
+				988EEC18060A8388012A671A /* Sources */,
+				8699936760AED4E4E24AADD3 /* Frameworks */,
+				FE31222361D771697B2B4EA2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A5CD1FEF48BBAA4042D81DB4 /* PBXTargetDependency */,
+			);
+			name = YapTests;
+			productName = VoiceCardsTests;
+			productReference = E8EE2214AB6BB4821DD9D6CF /* YapTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		7A893585BDBC95FC6AB56EF1 /* YapShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 51AB9524654D5B81ECCBCA73 /* Build configuration list for PBXNativeTarget "YapShare" */;
+			buildPhases = (
+				B458217C7E890F5577BB4AF2 /* Sources */,
+				E7A42981866009DDEA9F853D /* Frameworks */,
+				98E1CC9F1A909B3C7F9D6F05 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = YapShare;
+			productName = VoiceCardsShare;
+			productReference = A32F00C867B40797351E108C /* YapShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		A51C911AAB1BAC5DDC16AC53 /* YapLiveActivity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F0494A1DBA5E4F42428DFFEB /* Build configuration list for PBXNativeTarget "YapLiveActivity" */;
+			buildPhases = (
+				16270563B07B3D3E97158631 /* Sources */,
+				AAA3E12B4B40F3DFC6FE42F3 /* Frameworks */,
+				DFB0FD4B21A44E366A58D56B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = YapLiveActivity;
+			productName = VoiceCardsLiveActivity;
+			productReference = FF71BCB6CCB89E970A84040F /* YapLiveActivity.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		CB5AC31C3E1CE8F03D4A7D0D /* YapKeyboard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8778DB0C3B5726ADE93ECE3A /* Build configuration list for PBXNativeTarget "YapKeyboard" */;
+			buildPhases = (
+				CFB7C03195557A617A70C3D9 /* Sources */,
+				E368F7BFA95B9CE04293D453 /* Frameworks */,
+				4DF539885996566819C5A225 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = YapKeyboard;
+			productName = VoiceCardsKeyboard;
+			productReference = F916279A6880EFDDC154EE79 /* YapKeyboard.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		98F54143AB4E86B28C3AFEE0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					1545FC27B4C5038884946FDE = {
+						CreatedOnToolsVersion = 26.6;
+						ProvisioningStyle = Automatic;
+					};
+					400C1A3DBC46907F419FC948 = {
+						CreatedOnToolsVersion = 26.6;
+						ProvisioningStyle = Automatic;
+					};
+					41F71EAC1D32B36C8714C712 = {
+						CreatedOnToolsVersion = 26.6;
+						ProvisioningStyle = Automatic;
+					};
+					7A893585BDBC95FC6AB56EF1 = {
+						CreatedOnToolsVersion = 26.6;
+						ProvisioningStyle = Automatic;
+					};
+					A51C911AAB1BAC5DDC16AC53 = {
+						CreatedOnToolsVersion = 26.6;
+						ProvisioningStyle = Automatic;
+					};
+					CB5AC31C3E1CE8F03D4A7D0D = {
+						CreatedOnToolsVersion = 26.6;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 12D04D787E90C9B967248BFD /* Build configuration list for PBXProject "Yap" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = ADCF10F76EBF2A74473E9DC4;
+			productRefGroup = 00C45FD35CB0F9C5F764F070 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				400C1A3DBC46907F419FC948 /* YapApp */,
+				CB5AC31C3E1CE8F03D4A7D0D /* YapKeyboard */,
+				7A893585BDBC95FC6AB56EF1 /* YapShare */,
+				A51C911AAB1BAC5DDC16AC53 /* YapLiveActivity */,
+				41F71EAC1D32B36C8714C712 /* YapTests */,
+				1545FC27B4C5038884946FDE /* YapUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4DF539885996566819C5A225 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D79E46B84FB4B72A9A6C311 /* VoiceCardsKeyboard/Resources/KeyboardAssets.xcassets in Resources */,
+				FD2000010000000000000002 /* Shared/PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		60CDC4D647E62F029EEDE59F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2342C46672B003BD77C6845E /* VoiceCardsApp/Resources/Assets.xcassets in Resources */,
+				B8419636CA27129F01BA6735 /* VoiceCardsApp/Resources/Localizable.xcstrings in Resources */,
+				FD2000010000000000000001 /* Shared/PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		98E1CC9F1A909B3C7F9D6F05 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD2000010000000000000003 /* Shared/PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C5E33D0FFC6F861CB81357D3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DFB0FD4B21A44E366A58D56B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE31222361D771697B2B4EA2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		16270563B07B3D3E97158631 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1916FA8369659AE907E488ED /* Shared/Models/DictationActivityAttributes.swift in Sources */,
+				1B0F10000000000000000001 /* Shared/Models/KeyboardDictationSession.swift in Sources */,
+				1B0F10000000000000000002 /* Shared/Utilities/AppGroup.swift in Sources */,
+				32C1A1ABA5D9540F1EEA3F4D /* VoiceCardsLiveActivity/VoiceCardsDictationActivity.swift in Sources */,
+				291CA908B6C350CAD0C9E06D /* VoiceCardsLiveActivity/VoiceCardsLiveActivityBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		377C3D824C421FB74CDB4864 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C65DD78F4BD8344C394A761B /* VoiceCardsUITests/VoiceCardsUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C011C54B345A21D0C64F000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E94421F7CC3E80C0CF684641 /* Shared/Intents/StartKeyboardDictationIntent.swift in Sources */,
+				07D104F385961D2448A568A3 /* Shared/Models/AuthSession.swift in Sources */,
+				CD92FBEF809218B428C11AD6 /* Shared/Models/BuiltInModes.swift in Sources */,
+				68D7A16BBD194EEBB8416616 /* Shared/Models/Card.swift in Sources */,
+				A0C956A4675881AD817A48DA /* Shared/Models/CardSourceType.swift in Sources */,
+				BD8A5F913442D9EC527E5C1E /* Shared/Models/ClipboardItem.swift in Sources */,
+				E68F8E87AC66B2B2DF89BD8A /* Shared/Models/DictationActivityAttributes.swift in Sources */,
+				58428E05E2CF845BDA080F42 /* Shared/Models/KeyboardDictationSession.swift in Sources */,
+				217BF3583E320388C7433EC4 /* Shared/Models/PendingOperation.swift in Sources */,
+				465A6F3DD7AF54AC9ED69774 /* Shared/Models/PersonalTerm.swift in Sources */,
+				EC6B6284F0EB1558FF04CC45 /* Shared/Models/RewriteMode.swift in Sources */,
+				930B0D2EF75E7C4CBC8417F4 /* Shared/Persistence/CardRepository.swift in Sources */,
+				5FF86A8020B5E663C8B5E2FA /* Shared/Persistence/ClipboardRepository.swift in Sources */,
+				1FBCB556FC23FBE7DC8F09C8 /* Shared/Persistence/ModeRepository.swift in Sources */,
+				8384CF3F96A416DE9A77EF2F /* Shared/Persistence/PersonalLexiconRepository.swift in Sources */,
+				EAE7C27178C3B187D7E5FD07 /* Shared/Persistence/SharedModelContainer.swift in Sources */,
+				9B6C9C6707D5A4736D558617 /* Shared/Security/APIKeyStore.swift in Sources */,
+				F7D17CF6EA0AC20B3046DB4D /* Shared/Security/AuthSessionStore.swift in Sources */,
+				FAD500811DDA7FE39CE5EB48 /* Shared/Security/KeychainStore.swift in Sources */,
+				587CAD927E26FBB310A04170 /* Shared/Services/AnthropicRewriteService.swift in Sources */,
+				CFE126A9AFAC73C5C8DBC71F /* Shared/Services/ClipboardAssetStore.swift in Sources */,
+				F0F8374B540186EB1B719493 /* Shared/Services/ClipboardCaptureService.swift in Sources */,
+				59B78351D95EA0E32381E0BD /* Shared/Services/DeepSeekRewriteService.swift in Sources */,
+				9F6945BE421A940D9E0191BD /* Shared/Services/FallbackTranscriptionService.swift in Sources */,
+				6FEE5DD11EF71367BCB2C31C /* Shared/Services/HistoryRetentionService.swift in Sources */,
+				4C9BCD8F09CE75DDB5715501 /* Shared/Services/NetworkClient.swift in Sources */,
+				14341DF1900B964D0D6AE917 /* Shared/Services/NetworkMonitor.swift in Sources */,
+				9CD89593846A98D46FC39077 /* Shared/Services/OnDeviceSpeechService.swift in Sources */,
+				CAD694805C9E8D53EA909652 /* Shared/Services/OpenAIWhisperService.swift in Sources */,
+				48D4AA9F63EB5D463F132ADC /* Shared/Services/RetryProcessor.swift in Sources */,
+				15A238F259C44C0EB8499C1B /* Shared/Services/RetryQueue.swift in Sources */,
+				CBC225B20004C9426B931FED /* Shared/Services/RewriteService.swift in Sources */,
+				986B208AB98FEB93E8316BB9 /* Shared/Services/RomanScriptNormalizer.swift in Sources */,
+				8B73BA9F8F536F191C1B1EA5 /* Shared/Services/SarvamSpeechService.swift in Sources */,
+				BD9567FA762AC9762D520267 /* Shared/Services/SarvamStreamingTranscriptionClient.swift in Sources */,
+				5EFB0151B965C7EB52D66EA8 /* Shared/Services/SelectedRewriteService.swift in Sources */,
+				C76B91EF7CBFF6F7C733FC19 /* Shared/Services/SupabaseAuthService.swift in Sources */,
+				67AEA8F78009A9E85BB8FD11 /* Shared/Services/SupabaseConfiguration.swift in Sources */,
+				26926B2D59C270B34009E866 /* Shared/Services/SupabaseRewriteService.swift in Sources */,
+				48F33B8D725A903C38EB6E44 /* Shared/Services/SupabaseTranscriptionService.swift in Sources */,
+				5443F69B757DF6033CB1B620 /* Shared/Services/TitleService.swift in Sources */,
+				A63C11D67BB0F5A78938E3B1 /* Shared/Services/TranscriptEnhancementPrompt.swift in Sources */,
+				468E5FE3CB21AE78860747ED /* Shared/Services/TranscriptionService.swift in Sources */,
+				33481ABDF2B7A60D61734AF9 /* Shared/Services/VernacularTranscriptionService.swift in Sources */,
+				650C4E16713A7AE72FBF01AE /* Shared/UI/CardPreview.swift in Sources */,
+				42ECAC4830659615ECFBA018 /* Shared/UI/ModeChip.swift in Sources */,
+				FD1000010000000000000001 /* Shared/UI/YapDesignFoundation.swift in Sources */,
+				E513B9518667BD369CCAC2B8 /* Shared/Utilities/AppGroup.swift in Sources */,
+				27F0F1F33EDE11BBA86611B2 /* Shared/Utilities/AppPreferences.swift in Sources */,
+				9C64F2749E923613B1466FF6 /* Shared/Utilities/AppRoute.swift in Sources */,
+				F359990C6E19D6DC402969C4 /* Shared/Utilities/ClipboardWriter.swift in Sources */,
+				BB0478F500D098A88C714640 /* Shared/Utilities/RelativeDateFormatter.swift in Sources */,
+				F58069DB12E5C0F726EE9EF0 /* Shared/Utilities/TextNormalizer.swift in Sources */,
+				610D4BCEA301F81B091E614F /* VoiceCardsApp/AppModel.swift in Sources */,
+				9AB5B01E6495A7C61B4E6D88 /* VoiceCardsApp/Auth/AuthGateView.swift in Sources */,
+				6285985EB2A9C4CBDB1BBC31 /* VoiceCardsApp/Auth/AuthModel.swift in Sources */,
+				B51B843295ED9DC61462468A /* VoiceCardsApp/Clipboard/ClipboardModel.swift in Sources */,
+				463443870E696D50C17DCD27 /* VoiceCardsApp/Clipboard/ClipboardView.swift in Sources */,
+				F1C7E0E9B2300A1DDF3DF0AB /* VoiceCardsApp/Intents/PasteLastCardIntent.swift in Sources */,
+				2C8FB7983E6CE6A28A40C6FD /* VoiceCardsApp/Intents/VoiceCardsShortcuts.swift in Sources */,
+				F1150CE13ECCE977C0F9E47E /* VoiceCardsApp/Modes/ModeEditorView.swift in Sources */,
+				557B89E93F47F2DC0CA3A98D /* VoiceCardsApp/Modes/ModesModel.swift in Sources */,
+				AC38809C34BC5BBEF0341D95 /* VoiceCardsApp/Modes/ModesView.swift in Sources */,
+				6526EDEABE688EBDF7010F1B /* VoiceCardsApp/Onboarding/YapDesignSystem.swift in Sources */,
+				D4B02F2E83D3BFAA805EAB1B /* VoiceCardsApp/Onboarding/YapOnboardingFlowView.swift in Sources */,
+				DC5DC6C65B3D954F781C0469 /* VoiceCardsApp/Recording/AudioRecorder.swift in Sources */,
+				D89F6455E5E044C582DB6E01 /* VoiceCardsApp/Recording/CaptureLatencyTracker.swift in Sources */,
+				A1890F4AEE0801A27FB7F100 /* VoiceCardsApp/Recording/CaptureView.swift in Sources */,
+				4A907D09D907B9945DC43829 /* VoiceCardsApp/Recording/DictationLiveActivityController.swift in Sources */,
+				8CE296DEDA1B09AB4F5DE378 /* VoiceCardsApp/Recording/RecordingSessionModel.swift in Sources */,
+				8A8A6D7332E76D29E2C7BF32 /* VoiceCardsApp/Recording/RewriteComparisonView.swift in Sources */,
+				7D64F89C7117267EFA22DE9E /* VoiceCardsApp/Recording/WaveformView.swift in Sources */,
+				43E2A12473CFDBEC29839920 /* VoiceCardsApp/RootView.swift in Sources */,
+				368200DCD6017FD5FF8E0EB5 /* VoiceCardsApp/Search/SearchModel.swift in Sources */,
+				12382321E5FCE1569075BDD1 /* VoiceCardsApp/Search/SearchView.swift in Sources */,
+				3125EAFB33E22A3C184E10A4 /* VoiceCardsApp/Settings/KeyboardSetupView.swift in Sources */,
+				50CFCE47A87D177AF42A5EFB /* VoiceCardsApp/Settings/SettingsModel.swift in Sources */,
+				AB18B06EC24A279511D9DFB1 /* VoiceCardsApp/Settings/SettingsView.swift in Sources */,
+				111413D99EE29AE665547CC8 /* VoiceCardsApp/Stream/CardDetailView.swift in Sources */,
+				E0400CDC6F30F0DB084BA6CE /* VoiceCardsApp/Stream/CardRow.swift in Sources */,
+				F2F12B5D8B9C767DEC033D9F /* VoiceCardsApp/Stream/StreamModel.swift in Sources */,
+				150FD0B8616D419E142165F2 /* VoiceCardsApp/Stream/StreamView.swift in Sources */,
+				E943C2930445632A7A728E33 /* VoiceCardsApp/VoiceCardsApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		988EEC18060A8388012A671A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C41732948F63603F0E868725 /* VoiceCardsTests/AuthSessionTests.swift in Sources */,
+				D5153B29A1E5BAAE1100C686 /* VoiceCardsTests/BuiltInModesTests.swift in Sources */,
+				FE7BAE6BCD1A80CA090603E2 /* VoiceCardsTests/CardRepositoryTests.swift in Sources */,
+				634296E2345B6883886241D6 /* VoiceCardsTests/ClipboardHistoryTests.swift in Sources */,
+				1E4C34235C189EFA32D92B52 /* VoiceCardsTests/KeyboardModelTests.swift in Sources */,
+				9DDAE4B5B87BFE2E094A0FD7 /* VoiceCardsTests/RecordingSessionModelTests.swift in Sources */,
+				257B242F39FA20BF71708CD8 /* VoiceCardsTests/ServiceResponseTests.swift in Sources */,
+				B787E25A642F952F7870E43D /* VoiceCardsTests/ShareItemExtractorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B458217C7E890F5577BB4AF2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6AEC244B53DAFD6505532F63 /* Shared/Intents/StartKeyboardDictationIntent.swift in Sources */,
+				178FA559D817E30C42231B2B /* Shared/Models/BuiltInModes.swift in Sources */,
+				F62242A67DEC576657219D71 /* Shared/Models/Card.swift in Sources */,
+				BB975C2F5135D8F3047DFA4F /* Shared/Models/CardSourceType.swift in Sources */,
+				303C72EADE31E0FCBFFCDAD8 /* Shared/Models/ClipboardItem.swift in Sources */,
+				8740DDB4EE916A004FC8C092 /* Shared/Models/KeyboardDictationSession.swift in Sources */,
+				77F0E3979F74BA7AF22E5634 /* Shared/Models/PendingOperation.swift in Sources */,
+				9F62F46312D88C5983E54383 /* Shared/Models/PersonalTerm.swift in Sources */,
+				D413D22A27BBF66D5472C672 /* Shared/Models/RewriteMode.swift in Sources */,
+				40A76F26FA047A9BC5103F72 /* Shared/Persistence/CardRepository.swift in Sources */,
+				4C9D182FB375E63B179E160E /* Shared/Persistence/ClipboardRepository.swift in Sources */,
+				28479C76940BBC733DA923E9 /* Shared/Persistence/ModeRepository.swift in Sources */,
+				61E6F9B04322926136C9F227 /* Shared/Persistence/SharedModelContainer.swift in Sources */,
+				654B8D9479C24ED24D67C738 /* Shared/Services/ClipboardAssetStore.swift in Sources */,
+				DE675F0AAB29D28A562740ED /* Shared/Services/ClipboardCaptureService.swift in Sources */,
+				E95E3C6D4F0D1974E96C6F02 /* Shared/Utilities/AppGroup.swift in Sources */,
+				4975E26FE47C736C14B468DD /* Shared/Utilities/AppPreferences.swift in Sources */,
+				6E3DDF3DE3E2CCC89E547754 /* Shared/Utilities/RelativeDateFormatter.swift in Sources */,
+				C629FBE4E2CFCAC3334266BB /* Shared/Utilities/TextNormalizer.swift in Sources */,
+				B04E4A8A253AFAB376FFB38D /* VoiceCardsShare/ShareConfirmationView.swift in Sources */,
+				9AD7D4CFDBA98F4A87A71468 /* VoiceCardsShare/ShareViewController.swift in Sources */,
+				B5DCFA11B501BC0A82E1BDBB /* VoiceCardsShare/SharedItemExtractor.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFB7C03195557A617A70C3D9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				873933AD6119706277CE5941 /* Shared/Intents/StartKeyboardDictationIntent.swift in Sources */,
+				B25C6C70D3E8D42DC73C9284 /* Shared/Models/BuiltInModes.swift in Sources */,
+				2BD5F002291B8E7A75A62B7B /* Shared/Models/Card.swift in Sources */,
+				AE834E8421519D288335A6B8 /* Shared/Models/CardSourceType.swift in Sources */,
+				B5F3FA2C8D5C3536AC48B02E /* Shared/Models/ClipboardItem.swift in Sources */,
+				DF8C197C2076BF1CD5B786B3 /* Shared/Models/KeyboardDictationSession.swift in Sources */,
+				FD0ECA4334F8444E10D94A5B /* Shared/Models/PendingOperation.swift in Sources */,
+				1ABAFF434A9221593008DC67 /* Shared/Models/PersonalTerm.swift in Sources */,
+				A670A3052D5B82A014B8F35F /* Shared/Models/RewriteMode.swift in Sources */,
+				4698F74443BB19DB6F2C0B19 /* Shared/Persistence/CardRepository.swift in Sources */,
+				0C50A3870F7647438B511439 /* Shared/Persistence/ClipboardRepository.swift in Sources */,
+				87526990B7380F703466E337 /* Shared/Persistence/ModeRepository.swift in Sources */,
+				4F3447A4A44CE32DA3F679C1 /* Shared/Persistence/SharedModelContainer.swift in Sources */,
+				B5398FD35D255ABFFA068133 /* Shared/Services/ClipboardAssetStore.swift in Sources */,
+				5DB329B50B69FF9D095EDD8D /* Shared/Services/ClipboardCaptureService.swift in Sources */,
+				C2A7639A12AEDD0352932FA2 /* Shared/Utilities/AppGroup.swift in Sources */,
+				04EC0014E858BF339173FC6B /* Shared/Utilities/AppPreferences.swift in Sources */,
+				10BD3AEEC44C89F331F48391 /* Shared/Utilities/RelativeDateFormatter.swift in Sources */,
+				B5818B9872F9D78948CB0E37 /* Shared/Utilities/TextNormalizer.swift in Sources */,
+				E678EC5E7A10F721CA71D5F6 /* VoiceCardsKeyboard/FullAccessExplainer.swift in Sources */,
+				D52EF98178B5296A8B2BE3F2 /* VoiceCardsKeyboard/KeyboardCardButton.swift in Sources */,
+				AEA6871F11679C96B153EB99 /* VoiceCardsKeyboard/KeyboardClipboardButton.swift in Sources */,
+				9E36ECB496767A1DA8EA10FF /* VoiceCardsKeyboard/KeyboardModel.swift in Sources */,
+				62E880E0BB5710116FF9E425 /* VoiceCardsKeyboard/KeyboardView.swift in Sources */,
+				FD1000010000000000000002 /* Shared/UI/YapDesignFoundation.swift in Sources */,
+				D231C2A0E7EAB07587E1FB47 /* VoiceCardsKeyboard/KeyboardViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1ED33B47B8CD4D33FC0DAF99 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A51C911AAB1BAC5DDC16AC53 /* YapLiveActivity */;
+			targetProxy = 3FA8EC41056B7B1FB0FE439F /* PBXContainerItemProxy */;
+		};
+		2699FD12DEADC943EA794B30 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A893585BDBC95FC6AB56EF1 /* YapShare */;
+			targetProxy = D6D528A53A7F863B8CF061C4 /* PBXContainerItemProxy */;
+		};
+		80644B5736C0B6800ECB2364 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 400C1A3DBC46907F419FC948 /* YapApp */;
+			targetProxy = 512EA337EBCFB0A7FCC3AA52 /* PBXContainerItemProxy */;
+		};
+		A5CD1FEF48BBAA4042D81DB4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 400C1A3DBC46907F419FC948 /* YapApp */;
+			targetProxy = 512EA337EBCFB0A7FCC3AA52 /* PBXContainerItemProxy */;
+		};
+		B51F7D0F061BE009A0BFA9DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CB5AC31C3E1CE8F03D4A7D0D /* YapKeyboard */;
+			targetProxy = A3E83AF6A1669FF7A208027C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1826C8107A8F02CB1F5B17C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA083DE9065CDD113527956E /* Configuration/Release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = VoiceCardsLiveActivity/VoiceCardsLiveActivity.entitlements;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5W2NHWNTW6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceCardsLiveActivity/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta.liveactivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		1AFB698C6AF1B7773DBBB784 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5DAC9DF8A40EF964BD0D7AD /* Configuration/Debug.xcconfig */;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TEST_TARGET_NAME = YapApp;
+			};
+			name = Debug;
+		};
+		2544B0EC63D84FDE1E02F873 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5DAC9DF8A40EF964BD0D7AD /* Configuration/Debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Yap.app/Yap";
+			};
+			name = Debug;
+		};
+		3600542EF51E96FFA7318E3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5DAC9DF8A40EF964BD0D7AD /* Configuration/Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = VoiceCardsApp/VoiceCards.entitlements;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 5W2NHWNTW6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceCardsApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta;
+				PRODUCT_MODULE_NAME = VoiceCards;
+				PRODUCT_NAME = Yap;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		3B14A17FD99527340380288A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5DAC9DF8A40EF964BD0D7AD /* Configuration/Debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = VoiceCardsShare/VoiceCardsShare.entitlements;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 5W2NHWNTW6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceCardsShare/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta.share;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		4EB6A4472509B8CDAEA56175 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA083DE9065CDD113527956E /* Configuration/Release.xcconfig */;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TEST_TARGET_NAME = YapApp;
+			};
+			name = Release;
+		};
+		7946E97015C0D2107F6DB6C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5DAC9DF8A40EF964BD0D7AD /* Configuration/Debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = VoiceCardsLiveActivity/VoiceCardsLiveActivity.entitlements;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 5W2NHWNTW6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceCardsLiveActivity/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta.liveactivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		877A6BA951A2EA0025A2ABE8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5DAC9DF8A40EF964BD0D7AD /* Configuration/Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+			};
+			name = Debug;
+		};
+		8F4C9582F391268C2E9CCFDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA083DE9065CDD113527956E /* Configuration/Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = VoiceCardsApp/VoiceCards.entitlements;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5W2NHWNTW6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceCardsApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta;
+				PRODUCT_MODULE_NAME = VoiceCards;
+				PRODUCT_NAME = Yap;
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		90E30D9A81A76E60F4202FBC /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA083DE9065CDD113527956E /* Configuration/Release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = VoiceCardsShare/VoiceCardsShare.entitlements;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5W2NHWNTW6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceCardsShare/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta.share;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		959134B361DD7E21ADEA3164 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA083DE9065CDD113527956E /* Configuration/Release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+			};
+			name = Release;
+		};
+		AC6AF7DAAD1A8A174DDC6A76 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA083DE9065CDD113527956E /* Configuration/Release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = VoiceCardsKeyboard/VoiceCardsKeyboard.entitlements;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5W2NHWNTW6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceCardsKeyboard/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta.keyboard;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		C4B9EE1D4A2FFD51C32355DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA083DE9065CDD113527956E /* Configuration/Release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Yap.app/Yap";
+			};
+			name = Release;
+		};
+		CFA68BBB5FE41B0B413DA007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5DAC9DF8A40EF964BD0D7AD /* Configuration/Debug.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = VoiceCardsKeyboard/VoiceCardsKeyboard.entitlements;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 5W2NHWNTW6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceCardsKeyboard/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rachitmanchanda.yap.beta.keyboard;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		12D04D787E90C9B967248BFD /* Build configuration list for PBXProject "Yap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				877A6BA951A2EA0025A2ABE8 /* Debug */,
+				959134B361DD7E21ADEA3164 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		34ACE1EDF516FDE9CC9A55AE /* Build configuration list for PBXNativeTarget "YapApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3600542EF51E96FFA7318E3F /* Debug */,
+				8F4C9582F391268C2E9CCFDD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		51AB9524654D5B81ECCBCA73 /* Build configuration list for PBXNativeTarget "YapShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3B14A17FD99527340380288A /* Debug */,
+				90E30D9A81A76E60F4202FBC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		782BE8967B02EA128ACB78EA /* Build configuration list for PBXNativeTarget "YapTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2544B0EC63D84FDE1E02F873 /* Debug */,
+				C4B9EE1D4A2FFD51C32355DE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8778DB0C3B5726ADE93ECE3A /* Build configuration list for PBXNativeTarget "YapKeyboard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFA68BBB5FE41B0B413DA007 /* Debug */,
+				AC6AF7DAAD1A8A174DDC6A76 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A10575C6E538AA42DD2A6145 /* Build configuration list for PBXNativeTarget "YapUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AFB698C6AF1B7773DBBB784 /* Debug */,
+				4EB6A4472509B8CDAEA56175 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F0494A1DBA5E4F42428DFFEB /* Build configuration list for PBXNativeTarget "YapLiveActivity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7946E97015C0D2107F6DB6C9 /* Debug */,
+				1826C8107A8F02CB1F5B17C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+}

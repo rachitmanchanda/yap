@@ -8,29 +8,44 @@ struct KeyboardClipboardButton: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: YapSpacing.xSmall) {
                 if let thumbnail {
                     Image(uiImage: thumbnail)
                         .resizable()
                         .scaledToFill()
                         .frame(width: 142, height: 64)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .clipShape(RoundedRectangle(cornerRadius: YapRadius.chip))
                 } else {
-                    Label(item.kind.title, systemImage: item.kind.systemImage)
-                        .font(.system(size: 11, weight: .heavy, design: .rounded))
+                    HStack(spacing: YapSpacing.xSmall) {
+                        Image(kindIcon.assetName)
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 12, height: 12)
+                        Text(item.kind.title)
+                    }
+                        .font(YapType.metadata)
                     Text(item.displayText)
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .font(YapType.metadata)
                         .foregroundStyle(YapKeyboardPalette.paper.opacity(0.58))
                         .lineLimit(2)
                 }
             }
             .foregroundStyle(YapKeyboardPalette.paper)
             .frame(width: 142, height: 70, alignment: .leading)
-            .padding(8)
-            .background(.black.opacity(0.28), in: RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).stroke(.white.opacity(0.2), lineWidth: 1))
+            .padding(YapSpacing.small)
+            .background(.black.opacity(0.28), in: RoundedRectangle(cornerRadius: YapRadius.chip))
+            .overlay(RoundedRectangle(cornerRadius: YapRadius.chip).stroke(.white.opacity(0.2), lineWidth: 1))
         }
         .buttonStyle(.plain)
         .accessibilityLabel(item.kind == .image ? "Copy image" : "Paste \(item.displayText)")
+    }
+
+    private var kindIcon: YapKeyboardIcon {
+        switch item.kind {
+        case .text: .clipboard
+        case .url: .externalLink
+        case .image: .image
+        }
     }
 }

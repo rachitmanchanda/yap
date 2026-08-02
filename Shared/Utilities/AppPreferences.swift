@@ -26,24 +26,9 @@ enum AppPreferences {
         set { defaults.set(newValue, forKey: "automaticClipboardCapture") }
     }
 
-    static var shouldStartCapture: Bool {
-        get { defaults.bool(forKey: "shouldStartCapture") }
-        set { defaults.set(newValue, forKey: "shouldStartCapture") }
-    }
-
     static var hasCompletedOnboarding: Bool {
         get { defaults.bool(forKey: "hasCompletedOnboarding") }
         set { defaults.set(newValue, forKey: "hasCompletedOnboarding") }
-    }
-
-    static var pendingKeyboardSessionID: UUID? {
-        get {
-            defaults.string(forKey: "pendingKeyboardSessionID")
-                .flatMap(UUID.init(uuidString:))
-        }
-        set {
-            defaults.set(newValue?.uuidString, forKey: "pendingKeyboardSessionID")
-        }
     }
 
     static var rewriteProvider: RewriteProviderChoice {
@@ -56,6 +41,19 @@ enum AppPreferences {
             TranscriptionProviderChoice(rawValue: defaults.string(forKey: "transcriptionProvider") ?? "") ?? .automatic
         }
         set { defaults.set(newValue.rawValue, forKey: "transcriptionProvider") }
+    }
+
+    /// Remove only Yap-owned preferences; clearing the whole suite can disturb extension bookkeeping.
+    static func resetForAccountDeletion() {
+        [
+            "defaultModeID",
+            "retentionDays",
+            "automaticClipboardCapture",
+            "hasCompletedOnboarding",
+            "rewriteProvider",
+            "transcriptionProvider",
+            "latestCaptureLatency"
+        ].forEach(defaults.removeObject(forKey:))
     }
 }
 

@@ -1,6 +1,6 @@
 # VoiceCards
 
-VoiceCards is an iOS 17+ voice-first memory app: capture speech or shared content, keep it as a searchable card, then paste it from a custom keyboard. Because iOS custom keyboards cannot access the microphone, the keyboard’s Speak button runs a system-mediated App Intent that foregrounds VoiceCards already recording; the main app owns the audio session.
+Yap is an iOS 17+ voice-first memory app: capture speech or shared content, keep it as a searchable card, then paste it from a custom keyboard. Because iOS custom keyboards cannot access the microphone, the first Speak action runs a system-mediated App Intent that foregrounds Yap; the main app owns the audio session.
 
 ## Open and configure
 
@@ -19,7 +19,7 @@ Apple must be enabled in the configured Supabase project and its native Client I
 
 Debug builds retain the ten-tap local bypass so development and UI tests remain unblocked. The bypass code is excluded from Release and therefore cannot ship in TestFlight or the App Store.
 
-Voice transcription starts a `transcribe-stream` WebSocket as capture begins. The app sends 16 kHz mono PCM through the relay to Sarvam Saaras v3 in transliteration mode, so Hindi-English speech stays in stable Roman-script Hinglish while recognition happens. The language and output style are fixed when recording starts and reused by every fallback. The same 16 kHz PCM is retained as a WAV until a card saves; this avoids route-dependent AAC encoder failures while remaining small enough for the three-minute cap. If the stream fails or returns no speech, `transcribe` retries the completed file and Apple Speech remains the offline fallback.
+Voice transcription starts a `transcribe-stream` WebSocket as capture begins. The app sends 16 kHz mono PCM through the relay to Sarvam Saaras v3 in code-mix mode so English words are recognized lexically instead of being rendered as Hindi phonetics. The cleanup pass converts only native-script spans into natural Roman Hinglish. The language and output style are fixed when recording starts and reused by every fallback. The same 16 kHz PCM is retained as a WAV until a card saves; this avoids route-dependent AAC encoder failures while remaining small enough for the three-minute cap. If the stream fails, returns no speech, or contains strong phonetic-artifact signals, `transcribe` retries the completed file and Apple Speech remains the offline fallback.
 
 The deployed `rewrite` function owns Claude and DeepSeek routing. The app remembers an exponentially weighted latency per provider, prefers the fastest one, and the function fails over to the other provider. Provider keys stay in the `SARVAM`, `CLAUDE`, and `DEEPSEEK` Supabase secrets; users never enter or receive them.
 
@@ -35,7 +35,9 @@ On iPhone, open **Settings → General → Keyboard → Keyboards → Add New Ke
 
 The idle keyboard is split into **Clipboard Items** and **Tap to Speak**. Clipboard history is captured locally whenever the app or keyboard is active and may trigger Apple’s paste-permission prompt. iOS does not expose copies made before VoiceCards observed them and VoiceCards never attempts background monitoring. Text and links insert directly; tapping an image restores it to the system clipboard and explains how to use the host app’s Paste command. Images are stored in the private App Group and are never sent to an AI provider.
 
-Speak uses `StartKeyboardDictationIntent` to foreground the main app because iOS extensions cannot own microphone capture. After the audio engine and ActivityKit respond, VoiceCards shows **Mic is on** with an animated bottom-edge swipe instruction; swipe right along the Home indicator to return to the previous app while capture and streaming continue. When recording stops, the Live Activity ends and the transcript is immediately published to the keyboard, which inserts it into the active text field without another tap. The same text is copied as a recovery path if iOS replaced the keyboard. Modes remain available when re-running the saved card.
+Speak uses `StartKeyboardDictationIntent` to foreground the main app because iOS extensions cannot own microphone capture. After the audio engine and ActivityKit respond, Yap shows **Mic is on** with an animated bottom-edge swipe instruction; swipe right along the Home indicator to return to the previous app while capture and streaming continue. That explicit action starts a four-hour **Yap Flow** session: the app keeps its audio engine armed in the background and iOS shows its orange microphone privacy indicator. Idle buffers are discarded locally and are neither written nor uploaded. Later keyboard taps signal the running app through the App Group and begin a new capture without reopening Yap. Calls, Siri, route changes, Low Power Mode, or system eviction may end Flow; the keyboard detects a stale heartbeat and falls back to the normal foreground handoff.
+
+When recording stops, Yap keeps the Live Activity in a ready state, cleans the transcript, and publishes it to the keyboard. The user can insert that clean text or choose any built-in/custom rewrite mode; the chosen result inserts into the active text field and is copied as a recovery path if iOS replaces the keyboard. At four hours, Yap releases the audio session and the ended Live Activity opens the app to start a fresh Flow session.
 
 ## Architecture
 

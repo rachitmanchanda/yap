@@ -1,6 +1,7 @@
 import XCTest
 @testable import VoiceCards
 
+@MainActor
 final class BuiltInModesTests: XCTestCase {
     func testStableUniqueBuiltInIdentifiers() {
         let definitions = BuiltInModes.definitions
@@ -20,5 +21,36 @@ final class BuiltInModesTests: XCTestCase {
                     || mode.id == "hindi-household"
             )
         }
+    }
+
+    func testSettingsRefreshIncludesNewCustomModeAndDeletionClearsDefault() throws {
+        let previousDefaultModeID = AppPreferences.defaultModeID
+        defer { AppPreferences.defaultModeID = previousDefaultModeID }
+
+        let container = try SharedModelContainer.make(inMemory: true)
+        let settings = SettingsModel(context: container.mainContext)
+        let modes = ModesModel(context: container.mainContext)
+
+        try modes.save(
+            id: nil,
+            name: "My voice",
+            emoji: "✨",
+            prompt: "Preserve my tone while fixing obvious mistakes."
+        )
+        settings.reloadModes()
+
+        let customMode = try XCTUnwrap(settings.modes.first { !$0.isBuiltIn })
+        XCTAssertEqual(customMode.name, "My voice")
+
+        settings.setDefaultMode(customMode.id)
+        XCTAssertEqual(AppPreferences.defaultModeID, customMode.id)
+        XCTAssertEqual(
+            SettingsModel(context: container.mainContext).defaultModeID,
+            customMode.id
+        )
+
+        modes.delete(customMode)
+
+        XCTAssertNil(AppPreferences.defaultModeID)
     }
 }

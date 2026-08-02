@@ -8,7 +8,7 @@ protocol APIKeyProviding: Sendable {
 }
 
 struct APIKeyStore: APIKeyProviding, Sendable {
-    private let keychain = KeychainStore(service: "com.APP.VoiceCards.api-keys")
+    private let keychain = KeychainStore(service: "com.rachitmanchanda.yap.beta.api-keys")
 
     func openAIKey() throws -> String? { try keychain.string(for: "openai") }
     func anthropicKey() throws -> String? { try keychain.string(for: "anthropic") }
@@ -18,4 +18,11 @@ struct APIKeyStore: APIKeyProviding, Sendable {
     func setAnthropicKey(_ value: String?) throws { try keychain.set(value, for: "anthropic") }
     func setSarvamKey(_ value: String?) throws { try keychain.set(value, for: "sarvam") }
     func setDeepSeekKey(_ value: String?) throws { try keychain.set(value, for: "deepseek") }
+
+    func removeAll() throws {
+        try setOpenAIKey(nil)
+        try setAnthropicKey(nil)
+        try setSarvamKey(nil)
+        try setDeepSeekKey(nil)
+    }
 }

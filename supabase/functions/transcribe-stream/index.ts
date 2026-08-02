@@ -16,9 +16,9 @@ Deno.serve((request) => {
 
   const incomingURL = new URL(request.url);
   const languageCode = incomingURL.searchParams.get("language") || "unknown";
-  const requestedMode = incomingURL.searchParams.get("mode") || "translit";
+  const requestedMode = incomingURL.searchParams.get("mode") || "codemix";
   const supportedModes = new Set(["translit", "codemix", "transcribe", "verbatim", "translate"]);
-  const mode = supportedModes.has(requestedMode) ? requestedMode : "translit";
+  const mode = supportedModes.has(requestedMode) ? requestedMode : "codemix";
   const upstreamURL = new URL("wss://api.sarvam.ai/speech-to-text/ws");
   upstreamURL.searchParams.set("language-code", languageCode);
   upstreamURL.searchParams.set("model", "saaras:v3");

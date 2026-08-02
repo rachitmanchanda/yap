@@ -38,4 +38,38 @@ final class CardRepositoryTests: XCTestCase {
         try repository.delete(card)
         XCTAssertTrue(try repository.recent().isEmpty)
     }
+
+    func testStreamStatisticsUseSavedYapsAndActiveMemoryHints() throws {
+        let container = try SharedModelContainer.make(inMemory: true)
+        let context = container.mainContext
+        let repository = CardRepository(context: context)
+
+        try repository.insert(
+            Card(
+                createdAt: .now,
+                sourceType: .voice,
+                rawText: "kal Rachit ko message karna",
+                title: "Message Rachit"
+            )
+        )
+        try repository.insert(
+            Card(
+                createdAt: Calendar.current.date(byAdding: .day, value: -30, to: .now)!,
+                sourceType: .voice,
+                rawText: "send the rent",
+                title: "Rent reminder"
+            )
+        )
+        context.insert(PersonalTerm(value: "Rachit", kind: .name))
+        context.insert(PersonalTerm(value: "kya scene", kind: .phrase, useCount: 3))
+        context.insert(PersonalTerm(value: "not active", kind: .phrase, useCount: 2))
+        try context.save()
+
+        let model = StreamModel(context: context)
+
+        XCTAssertEqual(model.cards.count, 2)
+        XCTAssertEqual(model.totalWordCount, 8)
+        XCTAssertEqual(model.yapsThisWeek, 1)
+        XCTAssertEqual(model.learnedTermCount, 2)
+    }
 }

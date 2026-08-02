@@ -14,6 +14,9 @@ struct SupabaseTranscriptionService: TranscriptionService {
         let boundary = "VoiceCards-\(UUID().uuidString)"
         var request = URLRequest(url: SupabaseConfiguration.functionURL(named: "transcribe"))
         request.httpMethod = "POST"
+        // Streaming is the fast path. Bound the batch fallback so FallbackTranscriptionService
+        // can move to on-device recognition instead of waiting on a cold relay.
+        request.timeoutInterval = 8
         request.setValue(SupabaseConfiguration.publishableKey, forHTTPHeaderField: "apikey")
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
 

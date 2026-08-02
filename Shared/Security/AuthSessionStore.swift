@@ -1,7 +1,7 @@
 import Foundation
 
 struct AuthSessionStore: Sendable {
-    private let keychain = KeychainStore(service: "com.APP.VoiceCards.supabase-auth")
+    private let keychain = KeychainStore(service: "com.rachitmanchanda.yap.beta.supabase-auth")
     private let account = "current-session"
 
     func load() throws -> AuthSession? {

@@ -16,21 +16,21 @@ struct SearchView: View {
 
             VStack(alignment: .leading, spacing: YapLayout.sectionSpacing) {
                 YapScreenHeading(title: "find it", subtitle: "every yap, instantly")
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, YapSpacing.appHorizontal)
 
                 YapSearchBox(prompt: "what did i say about…", text: $model.query)
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, YapSpacing.appHorizontal)
 
                 Group {
                     if model.query.isEmpty {
                         YapEmptyState(
-                            symbol: "sparkle.magnifyingglass",
+                            icon: .sparkles,
                             title: "ask your memory",
                             detail: "search names, places, phrases, or any word you remember."
                         )
                     } else if model.results.isEmpty && !model.isSearching {
                         YapEmptyState(
-                            symbol: "magnifyingglass",
+                            icon: .search,
                             title: "nothing matched that",
                             detail: "try a shorter phrase or a different word."
                         )
@@ -42,7 +42,14 @@ struct SearchView: View {
                                 YapSearchResultCard(card: card)
                             }
                             .buttonStyle(.plain)
-                            .listRowInsets(.init(top: 6, leading: 20, bottom: 6, trailing: 20))
+                            .listRowInsets(
+                                .init(
+                                    top: YapSpacing.small,
+                                    leading: YapSpacing.appHorizontal,
+                                    bottom: YapSpacing.small,
+                                    trailing: YapSpacing.appHorizontal
+                                )
+                            )
                             .listRowBackground(Color.clear)
                             .listRowSeparator(.hidden)
                         }
@@ -54,12 +61,12 @@ struct SearchView: View {
                     if model.isSearching {
                         ProgressView()
                             .tint(YapPalette.acid)
-                            .padding(.trailing, 28)
+                            .padding(.trailing, YapSpacing.xLarge)
                     }
                 }
             }
             // The custom heading belongs to the content, beneath the native back control.
-            .safeAreaPadding(.top, YapLayout.pushedContentTop)
+            .padding(.top, YapLayout.pushedContentTop)
         }
         .foregroundStyle(YapPalette.paper)
         .preferredColorScheme(.dark)
@@ -72,28 +79,31 @@ private struct YapSearchResultCard: View {
     let card: Card
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 9) {
+        VStack(alignment: .leading, spacing: YapSpacing.small) {
             HStack {
                 Text(card.title)
-                    .font(.system(size: 18, weight: .heavy, design: .rounded))
+                    .font(YapType.sectionTitle)
                     .lineLimit(1)
                 Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.caption.bold())
+                Image(yapIcon: .chevronRight)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 13, height: 13)
                     .foregroundStyle(YapPalette.paper55)
             }
             Text(card.preferredText)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(YapType.body)
                 .foregroundStyle(YapPalette.paper82)
                 .lineLimit(3)
-            HStack(spacing: 8) {
+            HStack(spacing: YapSpacing.small) {
                 Text(card.sourceType.rawValue.lowercased()).yapMetadataPill()
                 Text(card.createdAt, style: .relative)
             }
-            .font(.system(size: 11, weight: .bold, design: .rounded))
+            .font(YapType.metadata)
             .foregroundStyle(YapPalette.paper55)
         }
-        .padding(17)
-        .yapPanel(cornerRadius: 24)
+        .padding(YapSpacing.regular)
+        .yapPanel(cornerRadius: YapRadius.card)
     }
 }

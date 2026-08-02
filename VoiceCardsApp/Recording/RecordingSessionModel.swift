@@ -50,6 +50,7 @@ final class RecordingSessionModel {
         case requestingPermission
         case recording
         case transcribing
+        case enhancing
         case ready
         case rewriting
         case saving
@@ -89,6 +90,8 @@ final class RecordingSessionModel {
     private var audioURL: URL?
     private var keyboardMonitorTask: Task<Void, Never>?
     private var streamingTranscriptTask: Task<Void, Never>?
+    private var flowExpiryTask: Task<Void, Never>?
+    private var lastFlowHeartbeatAt: Date = .distantPast
     private var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid
 
     init(
@@ -163,16 +166,21 @@ final class RecordingSessionModel {
             phase = .recording
             if let keyboardSessionID {
                 let startedAt = Date.now
+                let existingExpiry = dictationBridge.load()?.flowExpiresAt
+                let flowExpiresAt = existingExpiry.flatMap { $0 > startedAt ? $0 : nil }
+                    ?? startedAt.addingTimeInterval(4 * 60 * 60)
                 dictationBridge.update(
                     id: keyboardSessionID,
                     phase: .recording,
-                    startedAt: startedAt
+                    startedAt: startedAt,
+                    flowExpiresAt: flowExpiresAt
                 )
                 let activityResult = await liveActivity.start(
                     sessionID: keyboardSessionID,
                     startedAt: startedAt
                 )
                 keyboardHandoff.recordingReady(activityResult: activityResult)
+                scheduleFlowExpiry(at: flowExpiresAt)
                 startKeyboardSessionMonitor()
             }
         } catch {
@@ -191,17 +199,21 @@ final class RecordingSessionModel {
         guard phase == .recording else { return }
         latency.recordingStopped()
         do {
-            audioURL = try recorder.stop()
+            audioURL = try recorder.stop(keepSessionActive: keyboardSessionID != nil)
             if maximumReached { notice = "Three-minute recording limit reached." }
             phase = .transcribing
             if let keyboardSessionID {
                 dictationBridge.update(id: keyboardSessionID, phase: .transcribing)
                 keyboardHandoff.finish()
-                await liveActivity.endRecording()
+                await liveActivity.markProcessing()
                 beginBackgroundWork()
             }
             try await transcribeCurrentAudio()
-            endBackgroundWork()
+            // Keyboard mode selection arrives through the shared bridge after transcription.
+            // Keep the short iOS background task alive until the user chooses clean text or a mode.
+            if keyboardSessionID == nil {
+                endBackgroundWork()
+            }
         } catch {
             endBackgroundWork()
             await streamingClient?.cancel()
@@ -225,6 +237,8 @@ final class RecordingSessionModel {
         }
         keyboardMonitorTask?.cancel()
         keyboardMonitorTask = nil
+        flowExpiryTask?.cancel()
+        flowExpiryTask = nil
         phase = .idle
     }
 
@@ -246,28 +260,45 @@ final class RecordingSessionModel {
         guard let audioURL else { throw AudioRecorderError.unableToStart }
         do {
             let knownTerms = (try? lexicon.hints()) ?? []
-            let result: TranscriptionResult
-            if let streamedText = await streamingClient?.finish()?.nilIfBlank {
-                result = TranscriptionResult(text: streamedText, usedOnDeviceFallback: false)
-            } else {
-                result = try await transcriptionService.transcribe(
-                    audioURL: audioURL,
-                    language: activeLanguage,
-                    outputStyle: activeOutputStyle,
-                    vocabularyHints: knownTerms
-                )
-            }
-            transcript = RomanScriptNormalizer.normalize(result.text, for: activeOutputStyle)
+            // Streaming exists only to make speech feel immediate. Every stopped recording is
+            // recognized again from complete audio so partial phonetic hypotheses never get pasted.
+            await streamingClient?.cancel()
+            streamingTranscriptTask?.cancel()
+            streamingTranscriptTask = nil
+            let result = try await transcriptionService.transcribe(
+                audioURL: audioURL,
+                language: activeLanguage,
+                outputStyle: activeOutputStyle,
+                vocabularyHints: knownTerms
+            )
+            let providerTranscript = result.text
+            transcript = RomanScriptNormalizer.normalize(providerTranscript, for: activeOutputStyle)
             latency.transcriptReady()
             didUseOfflineTranscription = result.usedOnDeviceFallback
-            // Keyboard dictation skips this optional LLM pass: "None" must be the instant path.
-            if keyboardSessionID == nil,
-               let enhancement = try? await rewriteService.enhance(
-                transcript: result.text,
-                knownTerms: knownTerms
-            ), enhancement.changed {
-                enhancedTranscript = enhancement.text
+            phase = .enhancing
+            if let keyboardSessionID {
+                dictationBridge.update(
+                    id: keyboardSessionID,
+                    phase: .enhancing,
+                    transcript: transcript
+                )
             }
+            // Cleanup is mandatory before either preview or insertion. A network/provider failure
+            // now produces a retry state instead of silently pasting uncorrected phonetic text.
+            let enhancement = try await rewriteService.enhance(
+                // Feed cleanup the higher-fidelity code-mixed provider text. Romanizing
+                // Devanagari locally first creates artifacts such as `maim` and `jaba`.
+                transcript: providerTranscript,
+                knownTerms: knownTerms
+            )
+            let cleanedTranscript = RomanScriptNormalizer.normalize(
+                enhancement.text,
+                for: activeOutputStyle
+            )
+            guard !TranscriptionQualityGate.shouldRetryCompletedAudio(cleanedTranscript) else {
+                throw TranscriptionError.lowQualityResult
+            }
+            enhancedTranscript = cleanedTranscript
             phase = .ready
             if keyboardSessionID == nil,
                let defaultModeID = AppPreferences.defaultModeID,
@@ -275,7 +306,7 @@ final class RecordingSessionModel {
                 await apply(mode: defaultMode)
             }
             if keyboardSessionID != nil {
-                await completeKeyboardInsertion(text: enhancedTranscript ?? transcript)
+                await completeKeyboardDictationUsingDefaultMode()
             }
         } catch {
             try? retryQueue.enqueueTranscription(audioURL: audioURL, error: error)
@@ -304,7 +335,7 @@ final class RecordingSessionModel {
         }
     }
 
-    func saveAndCopy() async {
+    func saveAndCopy(keepFlowAlive: Bool = false) async {
         guard transcript.nilIfBlank != nil else {
             phase = .failed(TranscriptionError.emptyResult.localizedDescription)
             return
@@ -332,6 +363,11 @@ final class RecordingSessionModel {
             clipboard.copy(card.preferredText)
             if let audioURL { try? FileManager.default.removeItem(at: audioURL) }
             phase = .saved
+            if keepFlowAlive {
+                // `.completed` remains on the bridge until the keyboard consumes it. The monitor
+                // then returns this same armed audio session to `.readyForCapture`.
+                notice = "Yap Flow is still on."
+            }
         } catch {
             phase = .failed(error.localizedDescription)
         }
@@ -348,24 +384,36 @@ final class RecordingSessionModel {
                 try? await Task.sleep(for: .milliseconds(200))
                 guard let self, let keyboardSessionID else { return }
                 switch dictationBridge.load()?.phase {
+                case .startRequested:
+                    guard phase == .idle || phase == .saved else { break }
+                    await prepareForNextKeyboardCapture(startImmediately: true)
                 case .stopRequested:
                     await stopAndTranscribe()
                 case .cancelRequested:
+                    await cancelCurrentKeyboardCapture()
+                case .endFlowRequested:
                     await cancel()
                     return
                 case .insertRequested:
                     await completeKeyboardInsertion(text: enhancedTranscript ?? transcript)
-                    return
                 case .modeRequested:
                     await applyKeyboardMode()
-                    if dictationBridge.load()?.phase == .completed { return }
                 case .recording:
                     dictationBridge.update(
                         id: keyboardSessionID,
                         phase: .recording,
                         audioLevel: recorder.level
                     )
-                case .completed, .consumed, .failed:
+                case .consumed:
+                    await prepareForNextKeyboardCapture(startImmediately: false)
+                case .readyForCapture:
+                    if Date.now.timeIntervalSince(lastFlowHeartbeatAt) >= 1 {
+                        lastFlowHeartbeatAt = .now
+                        dictationBridge.update(id: keyboardSessionID, phase: .readyForCapture)
+                    }
+                case .completed:
+                    break
+                case .flowExpired, .failed:
                     return
                 default:
                     break
@@ -418,6 +466,53 @@ final class RecordingSessionModel {
         }
     }
 
+    /// Cancelling one utterance should not switch Flow off. The keyboard cannot restart a
+    /// background audio session, so we retain the armed engine and return to the ready heartbeat.
+    /// The explicit Close action in Yap still calls `cancel()` and tears the session down.
+    private func cancelCurrentKeyboardCapture() async {
+        guard let keyboardSessionID else { return }
+        recorder.cancel(keepSessionActive: true)
+        await streamingClient?.cancel()
+        streamingTranscriptTask?.cancel()
+        streamingTranscriptTask = nil
+        endBackgroundWork()
+        keyboardHandoff.finish()
+        transcript = ""
+        enhancedTranscript = nil
+        rewrittenText = nil
+        selectedModeID = nil
+        generatedTitle = nil
+        audioURL = nil
+        notice = nil
+        phase = .idle
+        dictationBridge.update(
+            id: keyboardSessionID,
+            phase: .readyForCapture,
+            transcript: "",
+            audioLevel: 0
+        )
+        await liveActivity.markReady()
+    }
+
+    /// The keyboard is a one-tap utility: cleanup, apply the shared default mode, then insert.
+    /// Reloading modes here also picks up a custom default created after Flow was first armed.
+    func completeKeyboardDictationUsingDefaultMode() async {
+        guard keyboardSessionID != nil,
+              (enhancedTranscript ?? transcript).nilIfBlank != nil else { return }
+
+        modes = (try? modeRepository.all()) ?? modes
+        if let defaultModeID = AppPreferences.defaultModeID,
+           let defaultMode = modes.first(where: { $0.id == defaultModeID }) {
+            latency.rewriteStarted()
+            await apply(mode: defaultMode)
+            latency.rewriteFinished()
+        }
+
+        await completeKeyboardInsertion(
+            text: rewrittenText ?? enhancedTranscript ?? transcript
+        )
+    }
+
     /// Publishes before title generation so the active keyboard can paste without waiting on another API call.
     func completeKeyboardInsertion(text: String) async {
         guard let keyboardSessionID, text.nilIfBlank != nil else { return }
@@ -425,7 +520,8 @@ final class RecordingSessionModel {
         clipboard.copy(text)
         latency.textInserted()
         dictationBridge.update(id: keyboardSessionID, phase: .completed, text: text)
-        await saveAndCopy()
+        await saveAndCopy(keepFlowAlive: true)
+        endBackgroundWork()
     }
 
     private func beginStreaming() async {
@@ -463,6 +559,9 @@ final class RecordingSessionModel {
             error: error.localizedDescription
         )
         Task { await liveActivity.endFailed(message: "Dictation failed") }
+        recorder.endSession()
+        flowExpiryTask?.cancel()
+        flowExpiryTask = nil
     }
 
     func markReturnedToPreviousApp() {
@@ -481,5 +580,46 @@ final class RecordingSessionModel {
         guard backgroundTaskID != .invalid else { return }
         UIApplication.shared.endBackgroundTask(backgroundTaskID)
         backgroundTaskID = .invalid
+    }
+
+    private func prepareForNextKeyboardCapture(startImmediately: Bool) async {
+        guard let keyboardSessionID else { return }
+        transcript = ""
+        enhancedTranscript = nil
+        rewrittenText = nil
+        selectedModeID = nil
+        generatedTitle = nil
+        audioURL = nil
+        notice = nil
+        phase = .idle
+
+        if startImmediately {
+            await start()
+        } else {
+            dictationBridge.update(
+                id: keyboardSessionID,
+                phase: .readyForCapture,
+                transcript: "",
+                audioLevel: 0
+            )
+            await liveActivity.markReady()
+        }
+    }
+
+    private func scheduleFlowExpiry(at expirationDate: Date) {
+        guard flowExpiryTask == nil else { return }
+        flowExpiryTask = Task { [weak self] in
+            let remaining = max(0, expirationDate.timeIntervalSinceNow)
+            try? await Task.sleep(for: .seconds(remaining))
+            guard !Task.isCancelled, let self, let keyboardSessionID else { return }
+            recorder.cancel()
+            await streamingClient?.cancel()
+            dictationBridge.update(id: keyboardSessionID, phase: .flowExpired)
+            await liveActivity.endExpired()
+            keyboardMonitorTask?.cancel()
+            keyboardMonitorTask = nil
+            flowExpiryTask = nil
+            phase = .failed("Yap Flow ended. Start it again to keep dictating from the keyboard.")
+        }
     }
 }

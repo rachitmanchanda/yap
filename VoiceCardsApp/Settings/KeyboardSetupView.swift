@@ -15,7 +15,11 @@ struct KeyboardSetupView: View {
                         Button {
                             dismiss()
                         } label: {
-                            Image(systemName: "xmark")
+                            Image(yapIcon: .close)
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 18, height: 18)
                                 .frame(width: 44, height: 44)
                                 .background(.ultraThinMaterial, in: Circle())
                                 .overlay(Circle().stroke(.white.opacity(0.35), lineWidth: 1))
@@ -28,18 +32,18 @@ struct KeyboardSetupView: View {
                         setupStep(3, "select Yap")
                         setupStep(4, "turn on Allow Full Access", isLast: true)
                     }
-                    .padding(.horizontal, 17)
-                    .yapPanel(cornerRadius: 26)
+                    .padding(.horizontal, YapSpacing.regular)
+                    .yapPanel(cornerRadius: YapRadius.card)
 
                     infoPanel(
                         title: "why full access?",
-                        symbol: "lock.shield.fill",
+                        icon: .lock,
                         text: "It lets the keyboard read Yap’s private shared memory. Yap never records from the keyboard, monitors typing, or sends what you type."
                     )
 
                     infoPanel(
                         title: "speaking while typing",
-                        symbol: "waveform",
+                        icon: .waveform,
                         text: "Tap the speak half of the keyboard. Yap opens with the microphone already on; swipe back and keep talking."
                     )
 
@@ -49,9 +53,9 @@ struct KeyboardSetupView: View {
                     }
                     .buttonStyle(YapPrimaryButtonStyle())
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, YapSpacing.appHorizontal)
                 .safeAreaPadding(.top, YapLayout.screenTopInset)
-                .padding(.bottom, 20)
+                .padding(.bottom, YapSpacing.medium)
             }
             .scrollIndicators(.hidden)
         }
@@ -60,17 +64,17 @@ struct KeyboardSetupView: View {
     }
 
     private func setupStep(_ number: Int, _ text: String, isLast: Bool = false) -> some View {
-        HStack(spacing: 13) {
+        HStack(spacing: YapSpacing.compact) {
             Text("\(number)")
-                .font(.system(size: 14, weight: .black, design: .rounded))
+                .font(YapType.label)
                 .foregroundStyle(YapPalette.ink)
                 .frame(width: 30, height: 30)
                 .background(YapPalette.acid, in: Circle())
             Text(text)
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .font(YapType.label)
             Spacer()
         }
-        .padding(.vertical, 14)
+        .padding(.vertical, YapSpacing.compact)
         .overlay(alignment: .bottom) {
             if !isLast {
                 Rectangle().fill(.white.opacity(0.12)).frame(height: 1)
@@ -78,18 +82,25 @@ struct KeyboardSetupView: View {
         }
     }
 
-    private func infoPanel(title: String, symbol: String, text: String) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Label(title, systemImage: symbol)
-                .font(.system(size: 17, weight: .heavy, design: .rounded))
-                .foregroundStyle(YapPalette.acid)
+    private func infoPanel(title: String, icon: YapIcon, text: String) -> some View {
+        VStack(alignment: .leading, spacing: YapSpacing.compact) {
+            HStack(spacing: YapSpacing.small) {
+                Image(yapIcon: icon)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 19, height: 19)
+                Text(title)
+            }
+            .font(YapType.sectionTitle)
+            .foregroundStyle(YapPalette.acid)
             Text(text)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(YapType.body)
                 .foregroundStyle(YapPalette.paper82)
                 .lineSpacing(4)
         }
-        .padding(18)
+        .padding(YapSpacing.regular)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .yapPanel(cornerRadius: 24)
+        .yapPanel(cornerRadius: YapRadius.card)
     }
 }

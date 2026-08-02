@@ -3,3 +3,6 @@ project_id = "pqbnigrqvihazlpvslqd"
 [functions.transcribe]
 # Supabase accepts the project's publishable key for the temporary ten-tap development path.
 verify_jwt = true
+
+[functions.delete-account]
+verify_jwt = true

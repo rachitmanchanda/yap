@@ -35,9 +35,46 @@ final class KeyboardModelTests: XCTestCase {
         XCTAssertEqual(card.preferredText, "raw")
     }
 
+    func testFlowReadyStatePreservesExpiryAcrossProcesses() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appending(path: UUID().uuidString, directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let bridge = KeyboardDictationBridge(
+            sessionURL: directory.appending(path: "flow-session.json")
+        )
+        let session = bridge.begin()
+        let expiry = Date.now.addingTimeInterval(4 * 60 * 60)
+
+        bridge.update(id: session.id, phase: .readyForCapture, flowExpiresAt: expiry)
+
+        XCTAssertEqual(bridge.load()?.phase, .readyForCapture)
+        XCTAssertEqual(bridge.load()?.flowExpiresAt?.timeIntervalSince1970 ?? 0,
+                       expiry.timeIntervalSince1970,
+                       accuracy: 0.001)
+    }
+
     func testUnicodeTextIsNotAlteredBeforeInsertion() {
         let text = "घर पहुँचकर message करना 😊"
         let card = Card(sourceType: .voice, rawText: text, title: "Unicode")
         XCTAssertEqual(card.preferredText, text)
+    }
+
+    func testUniversalCaptureRoutePreservesKeyboardSession() throws {
+        let sessionID = UUID()
+        let url = try XCTUnwrap(
+            URL(string: "https://gottayap.com/capture?keyboardSession=\(sessionID.uuidString)")
+        )
+
+        XCTAssertEqual(
+            AppRoute.parse(url),
+            .capture(autoStart: true, keyboardSessionID: sessionID)
+        )
+    }
+
+    func testUniversalCaptureRouteRejectsUntrustedHosts() throws {
+        let url = try XCTUnwrap(URL(string: "https://example.com/capture"))
+        XCTAssertNil(AppRoute.parse(url))
     }
 }

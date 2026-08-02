@@ -17,6 +17,17 @@ final class ServiceResponseTests: XCTestCase {
         )
     }
 
+    func testEnhancementPromptDoesNotInventExpressivePunctuation() {
+        let prompt = TranscriptEnhancementPrompt.system(knownTerms: "")
+        XCTAssertTrue(prompt.contains("Never introduce an exclamation mark"))
+        XCTAssertTrue(prompt.contains("keep the result lowercase"))
+        XCTAssertTrue(prompt.contains("do not add a final full stop"))
+        XCTAssertTrue(prompt.contains("aadat lag gayi"))
+        XCTAssertTrue(prompt.contains("final output must use Latin script throughout"))
+        XCTAssertTrue(prompt.contains("token-by-token quality check"))
+        XCTAssertTrue(prompt.contains("mam'mi"))
+    }
+
     func testFallbackUsesOfflineWhenOnlineFails() async throws {
         let service = FallbackTranscriptionService(
             online: StubTranscriber(result: .failure(URLError(.notConnectedToInternet))),
@@ -51,9 +62,56 @@ final class ServiceResponseTests: XCTestCase {
         let body = try XCTUnwrap(capturedBody)
         let multipart = String(decoding: body, as: UTF8.self)
         XCTAssertTrue(multipart.contains("name=\"mode\""))
-        XCTAssertTrue(multipart.contains("translit"))
+        XCTAssertTrue(multipart.contains("codemix"))
         XCTAssertTrue(multipart.contains("hi-IN"))
         XCTAssertEqual(TranscriptionLanguage.hindi.displayName, "Hinglish")
+    }
+
+    func testRomanHinglishUsesCodeMixRecognitionBeforeCleanup() {
+        XCTAssertEqual(TranscriptionOutputStyle.romanHinglish.sarvamMode, "codemix")
+    }
+
+    func testQualityGateRetriesPhoneticApostropheArtifacts() {
+        XCTAssertTrue(
+            TranscriptionQualityGate.shouldRetryCompletedAudio(
+                "neksta ta'ima mam'mi apa acchi kolda kophi"
+            )
+        )
+        XCTAssertFalse(
+            TranscriptionQualityGate.shouldRetryCompletedAudio(
+                "i'm sure that's the cold coffee Ritika mentioned"
+            )
+        )
+        XCTAssertTrue(
+            TranscriptionQualityGate.shouldRetryCompletedAudio(
+                "yara a'i ki ipha disa isa varka"
+            )
+        )
+    }
+
+    func testManagedEnhancementUsesDedicatedHinglishCleanupWithinQualityBudget() async throws {
+        let client = RewriteRequestCapturingClient()
+        let service = SupabaseRewriteService(client: client)
+
+        let result = try await service.enhance(
+            transcript: "hey kya scene hai",
+            knownTerms: ["Rachit"]
+        )
+
+        XCTAssertEqual(result.text, "hey, kya scene hai?")
+        XCTAssertTrue(result.changed)
+
+        let capturedBody = await client.requestBody()
+        let body = try XCTUnwrap(capturedBody)
+        let json = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: body) as? [String: Any]
+        )
+        XCTAssertEqual(json["operation"] as? String, "enhance")
+        XCTAssertNil(json["mode"])
+        XCTAssertEqual(json["knownTerms"] as? [String], ["Rachit"])
+        let capturedTimeout = await client.timeoutInterval()
+        let timeout = try XCTUnwrap(capturedTimeout)
+        XCTAssertEqual(timeout, 15, accuracy: 0.01)
     }
 }
 
@@ -82,4 +140,23 @@ private actor RequestCapturingClient: HTTPClient {
     }
 
     func requestBody() -> Data? { body }
+}
+
+private actor RewriteRequestCapturingClient: HTTPClient {
+    private var body: Data?
+    private var timeout: TimeInterval?
+
+    func send(_ request: URLRequest) async throws -> HTTPResponse {
+        body = request.httpBody
+        timeout = request.timeoutInterval
+        return HTTPResponse(
+            data: Data(
+                #"{"text":"hey, kya scene hai?","title":"Casual message","provider":"deepseek","latencyMs":120}"#.utf8
+            ),
+            statusCode: 200
+        )
+    }
+
+    func requestBody() -> Data? { body }
+    func timeoutInterval() -> TimeInterval? { timeout }
 }

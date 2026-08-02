@@ -31,6 +31,9 @@ final class ModesModel {
 
     func delete(_ mode: RewriteMode) {
         do {
+            if AppPreferences.defaultModeID == mode.id {
+                AppPreferences.defaultModeID = nil
+            }
             try repository.delete(mode)
             reload()
         } catch {

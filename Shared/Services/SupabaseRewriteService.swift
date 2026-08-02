@@ -42,24 +42,33 @@ struct SupabaseRewriteService: RewriteService {
 
     func enhance(transcript: String, knownTerms: [String]) async throws -> TranscriptEnhancement {
         guard transcript.nilIfBlank != nil else { throw RewriteError.emptyInput }
+
+        // Enhancement has a stricter preservation contract than an optional rewrite mode:
+        // it fixes dictation artifacts while keeping Roman Hinglish and the speaker's own voice.
         let response = try await perform(ManagedRewriteRequest(
             operation: .enhance,
             text: transcript,
             mode: nil,
             knownTerms: knownTerms,
             preferredProvider: await latencyStore.preferredProvider()
-        ))
+        ), timeoutInterval: 15)
         await latencyStore.record(provider: response.provider, milliseconds: response.latencyMS)
         guard let enhanced = response.text.nilIfBlank else { throw RewriteError.malformedResponse }
         return TranscriptEnhancement(
             text: enhanced,
-            changed: response.changed ?? (enhanced != transcript)
+            changed: enhanced != transcript
         )
     }
 
-    private func perform(_ payload: ManagedRewriteRequest) async throws -> ManagedRewriteResponse {
+    private func perform(
+        _ payload: ManagedRewriteRequest,
+        timeoutInterval: TimeInterval? = nil
+    ) async throws -> ManagedRewriteResponse {
         var request = URLRequest(url: SupabaseConfiguration.functionURL(named: "rewrite"))
         request.httpMethod = "POST"
+        // Enhancement is a required quality gate before insertion. Give provider cold starts room
+        // to finish; a failed request surfaces Retry rather than silently pasting raw ASR output.
+        request.timeoutInterval = timeoutInterval ?? (payload.operation == .enhance ? 15 : 12)
         request.setValue(SupabaseConfiguration.publishableKey, forHTTPHeaderField: "apikey")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         if let token = try? sessionStore.load()?.accessToken.nilIfBlank {

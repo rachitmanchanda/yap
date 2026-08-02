@@ -9,22 +9,22 @@ struct KeyboardCardButton: View {
         Button {
             insert(card.preferredText)
         } label: {
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: YapSpacing.xSmall) {
                 Text(card.title)
-                    .font(.system(size: compact ? 12 : 14, weight: .heavy, design: .rounded))
+                    .font(compact ? YapType.metadata : YapType.label)
                     .lineLimit(1)
                 if !compact {
                     Text(card.preferredText)
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .font(YapType.metadata)
                         .foregroundStyle(YapKeyboardPalette.paper.opacity(0.58))
                         .lineLimit(2)
                 }
             }
             .foregroundStyle(YapKeyboardPalette.paper)
             .frame(width: compact ? 100 : 160, alignment: .leading)
-            .padding(9)
-            .background(.black.opacity(0.28), in: RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).stroke(.white.opacity(0.2), lineWidth: 1))
+            .padding(YapSpacing.small)
+            .background(.black.opacity(0.28), in: RoundedRectangle(cornerRadius: YapRadius.chip))
+            .overlay(RoundedRectangle(cornerRadius: YapRadius.chip).stroke(.white.opacity(0.2), lineWidth: 1))
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Paste \(card.title)")

@@ -19,7 +19,7 @@ struct ClipboardView: View {
 
                 if model.visibleItems.isEmpty {
                     YapEmptyState(
-                        symbol: "doc.on.clipboard",
+                        icon: .clipboard,
                         title: model.items.isEmpty ? "your clipboard lands here" : "nothing matched that",
                         detail: model.items.isEmpty
                             ? "yap remembers text, links and images it sees while the app or keyboard is active."
@@ -29,22 +29,41 @@ struct ClipboardView: View {
                     List {
                         ForEach(model.visibleItems) { item in
                             ClipboardItemCard(item: item, thumbnail: model.thumbnail(for: item))
-                                .listRowInsets(.init(top: 6, leading: 20, bottom: 6, trailing: 20))
+                                .listRowInsets(
+                                    .init(
+                                        top: YapSpacing.small,
+                                        leading: YapSpacing.appHorizontal,
+                                        bottom: YapSpacing.small,
+                                        trailing: YapSpacing.appHorizontal
+                                    )
+                                )
                                 .listRowBackground(Color.clear)
                                 .listRowSeparator(.hidden)
                                 .swipeActions(edge: .leading) {
                                     Button {
+                                        YapHaptics.selection()
                                         model.togglePin(item)
                                     } label: {
-                                        Label(item.pinned ? "Unpin" : "Pin", systemImage: "pin")
+                                        Label {
+                                            Text(item.pinned ? "Unpin" : "Pin")
+                                        } icon: {
+                                            Image(yapIcon: .pin)
+                                                .renderingMode(.template)
+                                        }
                                     }
                                     .tint(YapPalette.clay)
                                 }
                                 .swipeActions {
                                     Button(role: .destructive) {
+                                        YapHaptics.warning()
                                         model.delete(item)
                                     } label: {
-                                        Label("Delete", systemImage: "trash")
+                                        Label {
+                                            Text("Delete")
+                                        } icon: {
+                                            Image(yapIcon: .trash)
+                                                .renderingMode(.template)
+                                        }
                                     }
                                 }
                         }
@@ -52,10 +71,13 @@ struct ClipboardView: View {
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
                     .contentMargins(.vertical, 0, for: .scrollContent)
+                    .mask {
+                        YapTopScrollEdgeOpacityMask()
+                    }
                 }
             }
             // Keep branded content visually separate from the native navigation row.
-            .safeAreaPadding(.top, YapLayout.pushedContentTop)
+            .padding(.top, YapLayout.pushedContentTop)
         }
         .foregroundStyle(YapPalette.paper)
         .preferredColorScheme(.dark)
@@ -82,41 +104,57 @@ struct ClipboardView: View {
             YapScreenHeading(title: "clipboard", subtitle: "\(model.items.count) things copied")
             Spacer()
             Button {
+                YapHaptics.selection()
                 model.setAutomaticCapture(!model.automaticCapture)
             } label: {
-                Image(systemName: model.automaticCapture ? "pause.fill" : "play.fill")
-                    .font(.system(size: 15, weight: .black))
+                Image(yapIcon: model.automaticCapture ? .pause : .play)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(
+                        width: YapControlMetric.iconSmall,
+                        height: YapControlMetric.iconSmall
+                    )
                     .foregroundStyle(model.automaticCapture ? YapPalette.ink : YapPalette.paper)
-                    .frame(width: 46, height: 46)
+                    .frame(
+                        width: YapControlMetric.minimumTouchTarget,
+                        height: YapControlMetric.minimumTouchTarget
+                    )
                     .background(model.automaticCapture ? YapPalette.acid : .white.opacity(0.08), in: Circle())
                     .overlay(Circle().stroke(.white.opacity(0.42), lineWidth: 1))
                     .shadow(color: model.automaticCapture ? YapPalette.acid.opacity(0.4) : .clear, radius: 12)
             }
             .accessibilityLabel(model.automaticCapture ? "Pause clipboard capture" : "Resume clipboard capture")
+            .accessibilityHint(
+                model.automaticCapture
+                    ? "Keeps existing items and stops Yap from saving newly copied content."
+                    : "Starts saving newly copied content again."
+            )
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, YapSpacing.appHorizontal)
     }
 
     private var searchField: some View {
         YapSearchBox(prompt: "search what you copied", text: $model.query)
-            .padding(.horizontal, 20)
+            .padding(.horizontal, YapSpacing.appHorizontal)
     }
 
     private var filters: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+            HStack(spacing: YapSpacing.small) {
                 ForEach(ClipboardModel.Filter.allCases) { filter in
                     YapChoiceChip(
                         title: filter.rawValue.lowercased(),
                         isSelected: model.filter == filter
                     ) {
+                        YapHaptics.selection()
                         withAnimation(.snappy(duration: 0.22)) {
                             model.filter = filter
                         }
                     }
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, YapSpacing.appHorizontal)
         }
     }
 }
@@ -126,31 +164,35 @@ private struct ClipboardItemCard: View {
     let thumbnail: UIImage?
 
     var body: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: YapSpacing.compact) {
             preview
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: YapSpacing.small) {
                 Text(item.kind == .image ? "image from clipboard" : item.displayText)
-                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .font(YapType.bodyStrong)
                     .lineLimit(2)
 
-                HStack(spacing: 7) {
+                HStack(spacing: YapSpacing.small) {
                     Text(item.kind.title.lowercased())
                         .yapMetadataPill()
                     Text(item.createdAt, style: .relative)
                     if item.pinned {
-                        Image(systemName: "pin.fill")
+                        Image(yapIcon: .pin)
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 12, height: 12)
                             .foregroundStyle(YapPalette.acid)
                     }
                 }
-                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .font(YapType.metadata)
                 .foregroundStyle(YapPalette.paper55)
             }
             Spacer(minLength: 0)
         }
-        .padding(14)
+        .padding(YapSpacing.regular)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .yapPanel(cornerRadius: 24)
+        .yapPanel(cornerRadius: YapRadius.card)
         .accessibilityElement(children: .combine)
     }
 
@@ -161,14 +203,17 @@ private struct ClipboardItemCard: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: 72, height: 72)
-                .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: YapRadius.input, style: .continuous))
         } else {
-            Image(systemName: item.kind.systemImage)
-                .font(.system(size: 24, weight: .bold))
+            Image(yapIcon: item.kind == .url ? .externalLink : item.kind == .image ? .image : .clipboard)
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 25, height: 25)
                 .foregroundStyle(YapPalette.ink)
                 .frame(width: 72, height: 72)
                 .background(item.kind == .url ? YapPalette.acid : YapPalette.clay)
-                .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: YapRadius.input, style: .continuous))
         }
     }
 }

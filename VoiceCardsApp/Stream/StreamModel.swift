@@ -6,12 +6,15 @@ import SwiftData
 @Observable
 final class StreamModel {
     private(set) var cards: [Card] = []
+    private(set) var learnedTermCount = 0
     var searchText = ""
     var errorMessage: String?
 
     private let repository: CardRepository
+    private let context: ModelContext
 
     init(context: ModelContext) {
+        self.context = context
         repository = CardRepository(context: context)
         reload()
     }
@@ -25,9 +28,26 @@ final class StreamModel {
         }
     }
 
+    var totalWordCount: Int {
+        cards.reduce(into: 0) { count, card in
+            count += card.preferredText.split(whereSeparator: \.isWhitespace).count
+        }
+    }
+
+    var yapsThisWeek: Int {
+        guard let weekStart = Calendar.current.dateInterval(of: .weekOfYear, for: .now)?.start else {
+            return 0
+        }
+        return cards.lazy.filter { $0.createdAt >= weekStart }.count
+    }
+
     func reload() {
         do {
             cards = try repository.recent()
+            learnedTermCount = try context.fetch(FetchDescriptor<PersonalTerm>())
+                .lazy
+                .filter { $0.kind == .name || $0.useCount >= 3 }
+                .count
             errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription

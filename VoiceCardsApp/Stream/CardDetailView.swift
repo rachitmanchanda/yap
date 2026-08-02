@@ -15,9 +15,9 @@ struct CardDetailView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: YapLayout.sectionSpacing) {
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: YapSpacing.small) {
                         Text(card.title)
-                            .font(.system(size: 31, weight: .black, design: .rounded))
+                            .font(YapType.screenTitle)
                             .tracking(-1)
                         metadata
                     }
@@ -35,13 +35,14 @@ struct CardDetailView: View {
                             ProgressView().tint(YapPalette.acid)
                             Text("rewriting that…")
                         }
-                        .font(.system(size: 14, weight: .heavy, design: .rounded))
+                        .font(YapType.label)
                         .foregroundStyle(YapPalette.paper55)
                     }
 
-                    HStack(spacing: 12) {
+                    HStack(spacing: YapSpacing.compact) {
                         Button {
                             UIPasteboard.general.string = card.preferredText
+                            YapHaptics.success()
                         } label: {
                             Text("copy")
                                 .frame(maxWidth: .infinity)
@@ -49,9 +50,14 @@ struct CardDetailView: View {
                         .buttonStyle(YapPrimaryButtonStyle())
 
                         Button {
+                            YapHaptics.selection()
                             isChoosingMode = true
                         } label: {
-                            Image(systemName: "wand.and.stars")
+                            Image(yapIcon: .sparkles)
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: YapControlMetric.iconLarge, height: YapControlMetric.iconLarge)
                                 .frame(width: 58, height: 58)
                                 .background(.ultraThinMaterial, in: Circle())
                                 .overlay(Circle().stroke(.white.opacity(0.4), lineWidth: 1))
@@ -59,9 +65,9 @@ struct CardDetailView: View {
                         .accessibilityLabel("Run in another mode")
                     }
                 }
-                .padding(.horizontal, 20)
-                .safeAreaPadding(.top, YapLayout.pushedContentTop)
-                .padding(.bottom, 70)
+                .padding(.horizontal, YapSpacing.appHorizontal)
+                .padding(.top, YapLayout.pushedContentTop)
+                .padding(.bottom, YapControlMetric.prominent + YapSpacing.small)
             }
             .scrollIndicators(.hidden)
         }
@@ -72,6 +78,7 @@ struct CardDetailView: View {
         .confirmationDialog("Choose another mode", isPresented: $isChoosingMode) {
             ForEach(modes) { mode in
                 Button("\(mode.emoji) \(mode.name)") {
+                    YapHaptics.selection()
                     Task { await rerun(mode) }
                 }
             }
@@ -88,47 +95,58 @@ struct CardDetailView: View {
     }
 
     private var originalPanel: some View {
-        VStack(alignment: .leading, spacing: 11) {
+        VStack(alignment: .leading, spacing: YapSpacing.compact) {
             Text("you said")
-                .font(.system(size: 13, weight: .heavy, design: .rounded))
+                .font(YapType.label)
                 .foregroundStyle(YapPalette.paper55)
             Text(card.rawText)
-                .font(.system(size: 18, weight: .medium, design: .rounded))
+                .font(YapType.body)
                 .lineSpacing(5)
                 .textSelection(.enabled)
         }
-        .padding(18)
+        .padding(YapSpacing.regular)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .yapPanel(cornerRadius: 25, depth: .sunk)
+        .yapPanel(cornerRadius: YapRadius.card, depth: .sunk)
     }
 
     private func rewritePanel(title: String, text: String) -> some View {
-        VStack(alignment: .leading, spacing: 13) {
+        VStack(alignment: .leading, spacing: YapSpacing.compact) {
             Text(title)
-                .font(.system(size: 13, weight: .heavy, design: .rounded))
+                .font(YapType.label)
                 .foregroundStyle(YapPalette.acid)
             Text(text)
-                .font(.system(size: 22, weight: .medium, design: .rounded))
+                .font(YapType.sectionTitle)
                 .tracking(-0.45)
                 .lineSpacing(7)
                 .textSelection(.enabled)
         }
-        .padding(20)
+        .padding(YapSpacing.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .yapPanel(cornerRadius: 27)
+        .yapPanel(cornerRadius: YapRadius.card)
     }
 
     private var metadata: some View {
-        HStack(spacing: 8) {
-            Label(sourceName, systemImage: card.sourceType.systemImage)
+        HStack(spacing: YapSpacing.small) {
+            HStack(spacing: YapSpacing.xSmall) {
+                Image(yapIcon: sourceIcon)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 12, height: 12)
+                Text(sourceName)
+            }
                 .yapMetadataPill()
             Text(card.createdAt, style: .relative)
             if card.pinned {
-                Image(systemName: "pin.fill")
+                Image(yapIcon: .pin)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 12, height: 12)
                     .foregroundStyle(YapPalette.acid)
             }
         }
-        .font(.system(size: 11, weight: .bold, design: .rounded))
+        .font(YapType.metadata)
         .foregroundStyle(YapPalette.paper55)
     }
 
@@ -137,6 +155,14 @@ struct CardDetailView: View {
         case .voice: "voice"
         case .share: "shared"
         case .manualPaste: "pasted"
+        }
+    }
+
+    private var sourceIcon: YapIcon {
+        switch card.sourceType {
+        case .voice: .microphone
+        case .share: .externalLink
+        case .manualPaste: .clipboard
         }
     }
 
@@ -157,8 +183,10 @@ struct CardDetailView: View {
             card.modeApplied = mode.id
             card.title = result.title
             try context.save()
+            YapHaptics.success()
         } catch {
             errorMessage = error.localizedDescription
+            YapHaptics.error()
         }
     }
 }

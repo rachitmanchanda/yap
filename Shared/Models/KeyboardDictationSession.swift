@@ -3,16 +3,21 @@ import Foundation
 struct KeyboardDictationSession: Codable, Equatable, Sendable {
     enum Phase: String, Codable, Sendable {
         case launching
+        case readyForCapture
+        case startRequested
         case recording
         case stopRequested
         case cancelRequested
+        case endFlowRequested
         case transcribing
+        case enhancing
         case awaitingMode
         case insertRequested
         case modeRequested
         case rewriting
         case completed
         case failed
+        case flowExpired
         case consumed
     }
 
@@ -24,6 +29,7 @@ struct KeyboardDictationSession: Codable, Equatable, Sendable {
     var selectedModeID: String?
     var audioLevel: Float?
     var errorMessage: String?
+    var flowExpiresAt: Date?
     var updatedAt: Date
 
     init(id: UUID = UUID(), phase: Phase = .launching) {
@@ -74,7 +80,8 @@ struct KeyboardDictationBridge: @unchecked Sendable {
         startedAt: Date? = nil,
         transcript: String? = nil,
         selectedModeID: String? = nil,
-        audioLevel: Float? = nil
+        audioLevel: Float? = nil,
+        flowExpiresAt: Date? = nil
     ) {
         guard var session = load(), session.id == id else { return }
         session.phase = phase
@@ -84,6 +91,7 @@ struct KeyboardDictationBridge: @unchecked Sendable {
         session.transcriptPreview = transcript ?? session.transcriptPreview
         session.selectedModeID = selectedModeID ?? session.selectedModeID
         session.audioLevel = audioLevel ?? session.audioLevel
+        session.flowExpiresAt = flowExpiresAt ?? session.flowExpiresAt
         session.updatedAt = .now
         save(session)
     }

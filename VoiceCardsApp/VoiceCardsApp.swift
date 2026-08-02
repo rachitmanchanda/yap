@@ -45,6 +45,11 @@ struct VoiceCardsApp: App {
                         appModel.handle(route)
                     }
                 }
+                .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+                    guard let url = activity.webpageURL,
+                          let route = AppRoute.parse(url) else { return }
+                    appModel.handle(route)
+                }
         }
         .modelContainer(container)
     }

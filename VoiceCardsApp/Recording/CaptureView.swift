@@ -8,24 +8,51 @@ struct CaptureView: View {
     let dismiss: () -> Void
 
     var body: some View {
-        Group {
-            if model.keyboardHandoff.state == .notApplicable {
-                standardCaptureSurface
-            } else {
-                keyboardCaptureSurface
+        GeometryReader { proxy in
+            Group {
+                if model.keyboardHandoff.state == .notApplicable {
+                    standardCaptureSurface
+                } else {
+                    keyboardCaptureSurface
+                }
             }
+            // Sheets can ask their content for an intrinsic size before resolving the detent.
+            // Pinning to the measured container prevents progress states from shrinking the
+            // atmosphere to the spinner/title's narrow ideal width.
+            .frame(width: proxy.size.width, height: proxy.size.height)
         }
         .preferredColorScheme(.dark)
-        .interactiveDismissDisabled(model.phase == .recording || model.phase == .transcribing)
+        .interactiveDismissDisabled(
+            model.phase == .recording || model.phase == .transcribing || model.phase == .enhancing
+        )
         .task {
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-uiTestEnhancementProgress") {
+                model.phase = .enhancing
+                return
+            }
+            #endif
             if autoStart && model.phase == .idle { await model.start() }
         }
         .onChange(of: model.phase) { _, phase in
-            if phase == .saved {
-                Task {
-                    try? await Task.sleep(for: .milliseconds(500))
-                    dismiss()
+            switch phase {
+            case .recording:
+                // The snap confirms the microphone is actually live, not merely that Start was tapped.
+                YapHaptics.snap()
+            case .ready:
+                YapHaptics.contact()
+            case .saved:
+                YapHaptics.success()
+                if model.keyboardHandoff.state == .notApplicable {
+                    Task {
+                        try? await Task.sleep(for: .milliseconds(500))
+                        dismiss()
+                    }
                 }
+            case .failed:
+                YapHaptics.error()
+            default:
+                break
             }
         }
         .onChange(of: scenePhase) { _, phase in
@@ -40,11 +67,14 @@ struct CaptureView: View {
         switch model.phase {
         case .idle:
             YapCaptureStatusScreen(
-                icon: "waveform",
+                icon: .waveform,
                 title: "ready when you are",
                 detail: "speak naturally. yap keeps the words and cleans up the rest.",
                 buttonTitle: "start yapping",
-                action: { Task { await model.start() } },
+                action: {
+                    YapHaptics.prepareForCapture()
+                    Task { await model.start() }
+                },
                 close: dismiss
             )
         case .requestingPermission:
@@ -54,15 +84,21 @@ struct CaptureView: View {
                 transcript: model.transcript,
                 level: model.recorder.level,
                 elapsedText: elapsedText,
-                stop: { Task { await model.stopAndTranscribe() } }
+                stop: {
+                    YapHaptics.snap()
+                    Task { await model.stopAndTranscribe() }
+                }
             )
         case .transcribing:
             YapCaptureProgressScreen(title: "making sense of that…", close: nil)
+        case .enhancing:
+            YapCaptureProgressScreen(title: "fixing the little things…", close: nil)
         case .ready, .rewriting:
             YapRewriteRevealScreen(
                 model: model,
                 elapsedText: elapsedText,
                 sayAgain: {
+                    YapHaptics.prepareForCapture()
                     Task {
                         await model.cancel()
                         await model.start()
@@ -73,7 +109,7 @@ struct CaptureView: View {
             YapCaptureProgressScreen(title: "remembering that…", close: nil)
         case .saved:
             YapCaptureStatusScreen(
-                icon: "checkmark",
+                icon: .check,
                 title: "saved & copied",
                 detail: "ready wherever you want to paste it.",
                 buttonTitle: nil,
@@ -82,7 +118,7 @@ struct CaptureView: View {
             )
         case .failed(let message):
             YapCaptureStatusScreen(
-                icon: "exclamationmark.triangle.fill",
+                icon: .warning,
                 title: "couldn’t finish",
                 detail: message,
                 buttonTitle: model.microphonePermissionDenied ? "open settings" : "try again",
@@ -100,116 +136,67 @@ struct CaptureView: View {
     }
 
     private var keyboardCaptureSurface: some View {
-        ZStack {
-            ScrollView {
-                VStack(spacing: YapLayout.sectionSpacing) {
-                    keyboardCaptureHeader
-                    keyboardHandoffContent
-                    if let notice = model.notice {
-                        Text(notice)
-                            .font(.system(size: 13, weight: .semibold, design: .rounded))
-                            .foregroundStyle(.orange)
-                            .padding(.horizontal, 20)
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
-                .padding(.bottom, YapLayout.dockBottomInset)
-            }
-            .scrollIndicators(.hidden)
-        }
-        .background { YapAuroraBackground(atmosphere: .capture) }
+        keyboardHandoffContent
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(YapPalette.base)
         .foregroundStyle(YapPalette.paper)
-    }
-
-    private var keyboardCaptureHeader: some View {
-        HStack {
-            Button {
-                Task {
-                    await model.cancel()
-                    dismiss()
-                }
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 15, weight: .black))
-                    .frame(width: 44, height: 44)
-                    .background(.black.opacity(0.28), in: Circle())
-                    .background(.ultraThinMaterial, in: Circle())
-                    .overlay(Circle().stroke(.white.opacity(0.36), lineWidth: 1))
-            }
-            .accessibilityLabel(model.phase == .recording ? "Cancel" : "Close")
-
-            Spacer()
-
-            HStack(spacing: 8) {
-                Circle()
-                    .fill(model.phase == .recording ? Color.red : YapPalette.paper55)
-                    .frame(width: 8, height: 8)
-                Text(model.phase == .recording ? "listening" : "keyboard capture")
-            }
-            .font(.system(size: 14, weight: .heavy, design: .rounded))
-            .padding(.horizontal, 14)
-            .frame(height: 36)
-            .yapPanel(cornerRadius: 18)
-
-            Spacer()
-
-            Color.clear
-                .frame(width: 44, height: 44)
-                .accessibilityHidden(true)
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
-        .background(.black.opacity(0.24))
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(.white.opacity(0.28), lineWidth: 1)
-        }
-        .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(.white.opacity(0.16))
-                .frame(height: 1)
-        }
     }
 
     @ViewBuilder
     private var keyboardHandoffContent: some View {
         switch model.phase {
         case .idle:
-            ScrollView {
-                Button("Start recording") { Task { await model.start() } }
+            VStack(spacing: YapSpacing.regular) {
+                Text("Yap Flow is on")
+                    .font(YapType.screenTitle)
+                Text("Swipe back and tap Yap whenever you want to speak.")
+                    .font(YapType.body)
+                    .foregroundStyle(YapPalette.paper55)
+                    .multilineTextAlignment(.center)
+                Button("Start recording now") {
+                    YapHaptics.prepareForCapture()
+                    Task { await model.start() }
+                }
                     .buttonStyle(YapPrimaryButtonStyle())
+                Button("Close") {
+                    Task {
+                        await model.cancel()
+                        dismiss()
+                    }
+                }
+                .buttonStyle(YapGhostButtonStyle())
             }
+            .padding(YapSpacing.large)
         case .requestingPermission:
             VStack(spacing: YapLayout.sectionSpacing) {
                 ProgressView()
                     .controlSize(.large)
-                    .tint(YapPalette.acid)
+                    .tint(YapPalette.clay)
                 Text("turning the mic on…")
-                    .font(.system(size: 20, weight: .heavy, design: .rounded))
+                    .font(YapType.sectionTitle)
             }
-            .frame(maxWidth: .infinity, minHeight: 320)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         case .recording:
             switch model.keyboardHandoff.state {
             case .preparing:
                 VStack(spacing: YapLayout.sectionSpacing) {
                     WaveformView(level: model.recorder.level)
-                        .tint(YapPalette.acid)
-                    Label("mic is on", systemImage: "mic.fill")
-                        .font(.system(size: 21, weight: .heavy, design: .rounded))
-                    ProgressView("preparing live status…")
-                        .tint(YapPalette.acid)
+                        .tint(YapPalette.paper)
+                    Text("turning live status on…")
+                        .font(YapType.sectionTitle)
+                    ProgressView()
+                        .tint(YapPalette.clay)
                 }
-                .frame(maxWidth: .infinity, minHeight: 360)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .ready, .returned:
                 KeyboardReturnCoach(
-                    transcript: model.transcript,
                     level: model.recorder.level,
                     elapsedText: elapsedText,
                     liveActivityResult: model.keyboardHandoff.liveActivityResult,
-                    stop: { Task { await model.stopAndTranscribe() } }
+                    stop: {
+                        YapHaptics.snap()
+                        Task { await model.stopAndTranscribe() }
+                    }
                 )
             case .finished:
                 ProgressView("Finishing recording…")
@@ -217,23 +204,38 @@ struct CaptureView: View {
                 EmptyView()
             }
         case .transcribing:
-            ProgressView("Transcribing…")
+            YapCaptureProgressScreen(title: "turning speech into text…", close: nil)
+        case .enhancing:
+            YapCaptureProgressScreen(title: "fixing typos…", close: nil)
         case .rewriting:
-            ProgressView("Rewriting…")
+            YapCaptureProgressScreen(title: "rewriting…", close: nil)
         case .saving:
-            ProgressView("Saving…")
+            YapCaptureProgressScreen(title: "saving…", close: nil)
         case .saved:
-            Label("Inserted", systemImage: "checkmark.circle.fill")
+            YapCaptureStatusScreen(
+                icon: .check,
+                title: "pasted",
+                detail: "your words are back in the text field.",
+                buttonTitle: nil,
+                action: {},
+                close: nil
+            )
         case .failed(let message):
-            ContentUnavailableView("Couldn’t finish", systemImage: "exclamationmark.triangle", description: Text(message))
-            if model.microphonePermissionDenied {
-                Button("Open Microphone Settings") {
-                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                    UIApplication.shared.open(url)
-                }
-            } else {
-                Button("Try again") { Task { await model.retryTranscription() } }
-            }
+            YapCaptureStatusScreen(
+                icon: .warning,
+                title: "couldn’t finish",
+                detail: message,
+                buttonTitle: model.microphonePermissionDenied ? "open settings" : "try again",
+                action: {
+                    if model.microphonePermissionDenied {
+                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                        UIApplication.shared.open(url)
+                    } else {
+                        Task { await model.retryTranscription() }
+                    }
+                },
+                close: dismiss
+            )
         case .ready:
             Text(model.enhancedTranscript ?? model.transcript)
                 .textSelection(.enabled)
@@ -256,20 +258,20 @@ private struct YapRecordingScreen: View {
         ZStack {
             VStack(spacing: 0) {
                 HStack {
-                    HStack(spacing: 10) {
+                    HStack(spacing: YapSpacing.small) {
                         Image("YapLiveDot")
                             .resizable()
                             .frame(width: 13, height: 13)
                         Text("listening")
                     }
-                    .font(.system(size: 16, weight: .heavy, design: .rounded))
-                    .padding(.horizontal, 15)
+                    .font(YapType.button)
+                    .padding(.horizontal, YapSpacing.regular)
                     .frame(height: 39)
-                    .yapPanel(cornerRadius: 20)
+                    .yapPanel(cornerRadius: YapRadius.input)
 
                     Spacer()
                     Text(elapsedText)
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .font(YapType.label)
                         .foregroundStyle(YapPalette.paper55)
                         .monospacedDigit()
                 }
@@ -277,7 +279,7 @@ private struct YapRecordingScreen: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         Text(transcript.nilIfBlank ?? "go on, i’m listening…")
-                            .font(.system(size: 27, weight: .medium, design: .rounded))
+                            .font(YapType.screenTitle)
                             .tracking(-0.75)
                             .lineSpacing(7)
                             .foregroundStyle(transcript.isEmpty ? YapPalette.paper55 : YapPalette.paper)
@@ -290,7 +292,7 @@ private struct YapRecordingScreen: View {
                     }
                 }
                 .frame(maxHeight: 175)
-                .padding(.top, 42)
+                .padding(.top, YapSpacing.xxLarge)
 
                 Spacer()
 
@@ -300,11 +302,11 @@ private struct YapRecordingScreen: View {
                 Spacer()
 
                 Button(action: stop) {
-                    RoundedRectangle(cornerRadius: 30, style: .continuous)
+                    RoundedRectangle(cornerRadius: YapRadius.sheet, style: .continuous)
                         .fill(YapPalette.clay)
                         .frame(width: 96, height: 96)
                         .overlay {
-                            RoundedRectangle(cornerRadius: 30, style: .continuous)
+                            RoundedRectangle(cornerRadius: YapRadius.sheet, style: .continuous)
                                 .stroke(.white.opacity(0.35), lineWidth: 1.5)
                         }
                         .shadow(color: YapPalette.clay.opacity(0.6), radius: 28, y: 12)
@@ -312,16 +314,18 @@ private struct YapRecordingScreen: View {
                 .accessibilityLabel("Stop recording")
 
                 Text("tap to stop")
-                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .font(YapType.caption)
                     .foregroundStyle(YapPalette.paper55)
-                    .padding(.top, 17)
-                    .padding(.bottom, 18)
+                    .padding(.top, YapSpacing.regular)
+                    .padding(.bottom, YapSpacing.regular)
             }
-            .padding(.horizontal, 22)
+            .padding(.horizontal, YapSpacing.large)
             // Leave the sheet grabber and rounded shoulder visually untouched.
-            .padding(.top, 24)
-            .safeAreaPadding(.bottom, 20)
+            .padding(.top, YapSpacing.large)
+            .safeAreaPadding(.bottom, YapSpacing.medium)
         }
+        // Capture surfaces must claim the clear sheet before drawing their atmosphere.
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background { YapAuroraBackground(atmosphere: .capture) }
         .foregroundStyle(YapPalette.paper)
     }
@@ -341,32 +345,32 @@ private struct YapRewriteRevealScreen: View {
                             .foregroundStyle(YapPalette.paper55)
                         Spacer()
                         Button("say it again", action: sayAgain)
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .padding(.horizontal, 17)
+                            .font(YapType.label)
+                            .padding(.horizontal, YapSpacing.regular)
                             .frame(height: 38)
                             .background(.white.opacity(0.09), in: Capsule())
                             .overlay(Capsule().stroke(.white.opacity(0.38), lineWidth: 1))
                     }
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(YapType.caption)
 
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: YapSpacing.compact) {
                         Text("you said")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .font(YapType.label)
                             .foregroundStyle(YapPalette.paper55)
                         Text(model.transcript)
-                            .font(.system(size: 17, weight: .medium, design: .rounded))
+                            .font(YapType.body)
                             .lineSpacing(5)
                             .textSelection(.enabled)
                     }
-                    .padding(18)
+                    .padding(YapSpacing.regular)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .yapPanel(cornerRadius: 27, depth: .sunk)
+                    .yapPanel(cornerRadius: YapRadius.card, depth: .sunk)
 
                     modePicker
 
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: YapSpacing.regular) {
                         Text(selectedModeTitle)
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .font(YapType.label)
                             .foregroundStyle(YapPalette.acid)
 
                         if model.phase == .rewriting {
@@ -376,7 +380,7 @@ private struct YapRewriteRevealScreen: View {
                         } else {
                             HStack(alignment: .bottom, spacing: 3) {
                                 Text(resultText)
-                                    .font(.system(size: 22, weight: .medium, design: .rounded))
+                                    .font(YapType.sectionTitle)
                                     .tracking(-0.55)
                                     .lineSpacing(7)
                                     .textSelection(.enabled)
@@ -387,18 +391,18 @@ private struct YapRewriteRevealScreen: View {
                             }
                         }
                     }
-                    .padding(20)
+                    .padding(YapSpacing.medium)
                     .frame(maxWidth: .infinity, minHeight: 210, alignment: .topLeading)
-                    .yapPanel(cornerRadius: 28)
+                    .yapPanel(cornerRadius: YapRadius.card)
 
                     if let notice = model.notice {
                         Text(notice)
-                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .font(YapType.caption)
                             .foregroundStyle(.orange)
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 28)
+                .padding(.horizontal, YapSpacing.appHorizontal)
+                .padding(.top, YapSpacing.large)
                 .padding(.bottom, YapLayout.sectionSpacing)
             }
             .scrollIndicators(.hidden)
@@ -412,16 +416,17 @@ private struct YapRewriteRevealScreen: View {
 
     private var modePicker: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
+            HStack(spacing: YapSpacing.small) {
                 ForEach(model.modes) { mode in
                     Button {
+                        YapHaptics.selection()
                         Task { await model.apply(mode: mode) }
                     } label: {
                         Text(displayName(for: mode))
-                            .font(.system(size: 15, weight: .heavy, design: .rounded))
+                            .font(YapType.button)
                             .foregroundStyle(model.selectedModeID == mode.id ? YapPalette.ink : YapPalette.paper)
-                            .padding(.horizontal, 18)
-                            .frame(height: 44)
+                            .padding(.horizontal, YapSpacing.regular)
+                            .frame(minHeight: YapControlMetric.minimumTouchTarget)
                             .background(
                                 model.selectedModeID == mode.id ? YapPalette.acid : .white.opacity(0.08),
                                 in: Capsule()
@@ -436,8 +441,11 @@ private struct YapRewriteRevealScreen: View {
                 }
 
                 Button(action: {}) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .bold))
+                    Image(yapIcon: .plus)
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 17, height: 17)
                         .frame(width: 44, height: 44)
                         .background(.white.opacity(0.08), in: Circle())
                         .overlay(Circle().stroke(.white.opacity(0.42), lineWidth: 1))
@@ -449,41 +457,36 @@ private struct YapRewriteRevealScreen: View {
     }
 
     private var bottomDock: some View {
-        VStack(spacing: 10) {
-            Text("tap a mode to re-run · export the before/after")
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
-                .foregroundStyle(YapPalette.paper55)
+        YapBottomDock {
+            VStack(spacing: YapSpacing.small) {
+                Text("tap a mode to re-run · export the before/after")
+                    .font(YapType.caption)
+                    .foregroundStyle(YapPalette.paper55)
 
-            HStack(spacing: 12) {
-                Button {
-                    Task { await model.saveAndCopy() }
-                } label: {
-                    Text("copy & save")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(YapPrimaryButtonStyle())
-                .disabled(model.phase == .rewriting)
+                HStack(spacing: YapSpacing.compact) {
+                    Button {
+                        YapHaptics.contact()
+                        Task { await model.saveAndCopy() }
+                    } label: {
+                        Text("copy & save")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(YapPrimaryButtonStyle())
+                    .disabled(model.phase == .rewriting)
 
-                ShareLink(item: exportText) {
-                    Image("YapExportGlyph")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 23, height: 23)
-                        .frame(width: 58, height: 58)
-                        .background(.black.opacity(0.32), in: Circle())
-                        .background(.ultraThinMaterial, in: Circle())
-                        .overlay(Circle().stroke(.white.opacity(0.42), lineWidth: 1))
+                    ShareLink(item: exportText) {
+                        Image("YapExportGlyph")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: YapControlMetric.iconLarge, height: YapControlMetric.iconLarge)
+                            .frame(width: 58, height: 58)
+                            .background(.black.opacity(0.32), in: Circle())
+                            .background(.ultraThinMaterial, in: Circle())
+                            .overlay(Circle().stroke(.white.opacity(0.42), lineWidth: 1))
+                    }
+                    .accessibilityLabel("Export before and after")
                 }
-                .accessibilityLabel("Export before and after")
             }
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, YapLayout.dockTopInset)
-        .safeAreaPadding(.bottom, YapLayout.dockBottomInset)
-        .background(.black.opacity(0.34))
-        .background(.ultraThinMaterial)
-        .overlay(alignment: .top) {
-            Rectangle().fill(.white.opacity(0.2)).frame(height: 1)
         }
     }
 
@@ -517,19 +520,23 @@ private struct YapCaptureProgressScreen: View {
 
     var body: some View {
         ZStack {
-            VStack(spacing: 24) {
+            VStack(spacing: YapSpacing.large) {
                 ProgressView()
                     .controlSize(.large)
                     .tint(YapPalette.acid)
                 Text(title)
-                    .font(.system(size: 24, weight: .heavy, design: .rounded))
+                    .font(YapType.screenTitle)
             }
             if let close {
                 VStack {
                     HStack {
                         Spacer()
                         Button(action: close) {
-                            Image(systemName: "xmark")
+                            Image(yapIcon: .close)
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 18, height: 18)
                                 .frame(width: 44, height: 44)
                                 .background(.ultraThinMaterial, in: Circle())
                         }
@@ -537,18 +544,21 @@ private struct YapCaptureProgressScreen: View {
                     }
                     Spacer()
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, YapSpacing.appHorizontal)
                 // A sheet's rounded top edge can clip controls placed at y = 0.
-                .padding(.top, 24)
+                .padding(.top, YapSpacing.large)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background { YapAuroraBackground(atmosphere: .capture) }
         .foregroundStyle(YapPalette.paper)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("captureProgressScreen")
     }
 }
 
 private struct YapCaptureStatusScreen: View {
-    let icon: String
+    let icon: YapIcon
     let title: String
     let detail: String
     let buttonTitle: String?
@@ -557,24 +567,27 @@ private struct YapCaptureStatusScreen: View {
 
     var body: some View {
         ZStack {
-            VStack(spacing: 18) {
-                Image(systemName: icon)
-                    .font(.system(size: 42, weight: .bold))
+            VStack(spacing: YapSpacing.regular) {
+                Image(yapIcon: icon)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 42, height: 42)
                     .foregroundStyle(YapPalette.acid)
                 Text(title)
-                    .font(.system(size: 28, weight: .black, design: .rounded))
+                    .font(YapType.screenTitle)
                 Text(detail)
-                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .font(YapType.body)
                     .foregroundStyle(YapPalette.paper55)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                 if let buttonTitle {
                     Button(buttonTitle, action: action)
                         .buttonStyle(YapPrimaryButtonStyle())
-                        .padding(.top, 12)
+                        .padding(.top, YapSpacing.compact)
                 }
             }
-            .padding(30)
+            .padding(YapSpacing.xLarge)
             .frame(maxWidth: 420)
 
             if let close {
@@ -582,7 +595,11 @@ private struct YapCaptureStatusScreen: View {
                     HStack {
                         Spacer()
                         Button(action: close) {
-                            Image(systemName: "xmark")
+                            Image(yapIcon: .close)
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 18, height: 18)
                                 .frame(width: 44, height: 44)
                                 .background(.ultraThinMaterial, in: Circle())
                         }
@@ -590,17 +607,17 @@ private struct YapCaptureStatusScreen: View {
                     }
                     Spacer()
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 24)
+                .padding(.horizontal, YapSpacing.appHorizontal)
+                .padding(.top, YapSpacing.large)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background { YapAuroraBackground(atmosphere: .capture) }
         .foregroundStyle(YapPalette.paper)
     }
 }
 
 private struct KeyboardReturnCoach: View {
-    let transcript: String
     let level: Float
     let elapsedText: String
     let liveActivityResult: LiveActivityStartResult?
@@ -610,84 +627,73 @@ private struct KeyboardReturnCoach: View {
     @State private var demonstratesSwipe = false
 
     var body: some View {
-        VStack(spacing: YapLayout.sectionSpacing) {
-            HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("mic is on")
-                        .font(.system(size: 28, weight: .black, design: .rounded))
-                        .tracking(-0.7)
-                    Text("keep talking naturally")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundStyle(YapPalette.paper55)
-                }
+        VStack(spacing: 0) {
+            HStack(spacing: YapSpacing.compact) {
+                HStack(spacing: YapSpacing.small) {
+                    Image("YapLiveDot")
+                        .resizable()
+                        .frame(width: 10, height: 10)
 
-                Spacer()
+                    Text("listening")
+                        .font(YapType.button)
+                        .tracking(-0.16)
+                }
+                .padding(.horizontal, YapSpacing.compact)
+                .frame(height: 42)
+                .background(.white.opacity(0.1), in: Capsule())
+                .overlay(Capsule().stroke(.white.opacity(0.3), lineWidth: 1))
+
+                Spacer(minLength: YapSpacing.compact)
 
                 Text(elapsedText)
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundStyle(YapPalette.paper82)
+                    .font(YapType.button)
+                    .foregroundStyle(YapPalette.paper55)
                     .monospacedDigit()
 
                 Button(action: stop) {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(Color.red)
-                        .frame(width: 48, height: 48)
+                    RoundedRectangle(cornerRadius: YapRadius.input, style: .continuous)
+                        .fill(YapPalette.clay)
+                        .frame(width: 56, height: 56)
                         .overlay {
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(.white)
-                                .frame(width: 14, height: 14)
+                        RoundedRectangle(cornerRadius: YapRadius.input, style: .continuous)
+                                .stroke(.white.opacity(0.4), lineWidth: 1)
                         }
+                        .shadow(color: YapPalette.clay.opacity(0.6), radius: 16)
                 }
                 .accessibilityLabel("Stop recording")
             }
+            .padding(.horizontal, YapSpacing.large)
+            .padding(.top, YapSpacing.small)
 
-            WaveformView(level: level, maximumHeight: 48)
-                .tint(YapPalette.acid)
+            Spacer()
+
+            CoachWaveform(level: level)
+                .tint(YapPalette.paper)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 4)
+                .padding(.horizontal, 78)
 
-            ScrollViewReader { proxy in
-                ScrollView {
-                    Text(transcript.nilIfBlank ?? "your words will appear here as you speak…")
-                        .font(.system(size: 20, weight: .medium, design: .rounded))
-                        .foregroundStyle(transcript.isEmpty ? YapPalette.paper55 : YapPalette.paper)
-                        .lineSpacing(6)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .id("keyboardCoachTranscript")
-                }
-                .scrollIndicators(.hidden)
-                .onChange(of: transcript) {
-                    proxy.scrollTo("keyboardCoachTranscript", anchor: .bottom)
-                }
-            }
-            .frame(height: 116)
-            .padding(18)
-            .yapPanel(cornerRadius: 24, depth: .sunk)
+            Spacer()
 
-            VStack(spacing: 12) {
+            VStack(spacing: YapSpacing.compact) {
+                if liveStatusUnavailable {
+                    Text("live status is unavailable, but the mic is still on")
+                        .font(YapType.caption)
+                        .foregroundStyle(.orange)
+                        .multilineTextAlignment(.center)
+                }
+
                 BottomEdgeSwipeHint(reduceMotion: reduceMotion, animate: demonstratesSwipe)
-                    .frame(height: 44)
+                    .frame(height: 24)
 
-                Text("Swipe right along the bottom edge")
-                    .font(.system(size: 20, weight: .heavy, design: .rounded))
-                    .multilineTextAlignment(.center)
-
-                Text("go back to where you were typing — yap keeps listening for up to 3 minutes.")
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                Text("swipe right along the bottom edge to go back")
+                    .font(YapType.caption)
+                    .tracking(0.24)
                     .foregroundStyle(YapPalette.paper55)
                     .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(18)
+            .padding(.horizontal, YapSpacing.large)
+            .padding(.bottom, YapSpacing.large)
             .frame(maxWidth: .infinity)
-            .yapPanel(cornerRadius: 26)
-
-            activityStatus
-
-            Text("if another keyboard appears, hold the globe key and choose yap again.")
-                .font(.system(size: 11, weight: .semibold, design: .rounded))
-                .foregroundStyle(YapPalette.paper55)
-                .multilineTextAlignment(.center)
         }
         .onAppear { demonstratesSwipe = true }
         .accessibilityElement(children: .contain)
@@ -697,27 +703,35 @@ private struct KeyboardReturnCoach: View {
         .accessibilityIdentifier("keyboardReturnCoach")
     }
 
-    @ViewBuilder
-    private var activityStatus: some View {
+    private var liveStatusUnavailable: Bool {
         switch liveActivityResult {
-        case .started:
-            Label("live recording status is active", systemImage: "waveform.circle.fill")
-                .foregroundStyle(YapPalette.acid)
-        case .disabled:
-            Label(
-                "live status is unavailable, but your mic is recording.",
-                systemImage: "waveform.slash"
-            )
-            .foregroundStyle(.orange)
-        case .failed:
-            Label(
-                "live status couldn’t start, but your mic is recording.",
-                systemImage: "exclamationmark.circle"
-            )
-            .foregroundStyle(.orange)
-        case nil:
-            EmptyView()
+        case .disabled, .failed: true
+        case .started, nil: false
         }
+    }
+}
+
+private struct CoachWaveform: View {
+    let level: Float
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 0.08)) { context in
+            let tick = context.date.timeIntervalSinceReferenceDate
+            HStack(alignment: .center, spacing: 4) {
+                ForEach(0..<27, id: \.self) { index in
+                    let center = 1 - abs(Double(index) - 13) / 13
+                    let pulse = (sin(tick * 7.5 + Double(index) * 0.68) + 1) / 2
+                    let energy = CGFloat(max(level, 0.16))
+                    let height = 7 + energy * 47 * CGFloat(0.28 + center * 0.72 + pulse * 0.42)
+
+                    Capsule()
+                        .fill(.tint)
+                        .frame(width: 4, height: min(height, 54))
+                }
+            }
+        }
+        .frame(height: 54)
+        .accessibilityLabel("Live recording level")
     }
 }
 
@@ -726,27 +740,22 @@ private struct BottomEdgeSwipeHint: View {
     let animate: Bool
 
     var body: some View {
-        ZStack {
-            Capsule()
-                .fill(YapPalette.paper.opacity(0.16))
-                .frame(height: 4)
-                .padding(.horizontal, 26)
-
-            HStack(spacing: 7) {
-                Image(systemName: "hand.point.up.left.fill")
-                Image(systemName: "arrow.right")
-                    .fontWeight(.bold)
-            }
-            .font(.system(size: 21, weight: .bold))
-            .foregroundStyle(YapPalette.acid)
-            .offset(x: reduceMotion ? 0 : (animate ? 70 : -64))
-            .opacity(reduceMotion ? 1 : (animate ? 0.04 : 1))
-            .animation(
-                reduceMotion
-                    ? nil
-                    : .easeOut(duration: 1.35).repeatForever(autoreverses: false),
-                value: animate
-            )
+        HStack {
+            Spacer()
+            Image(yapIcon: .arrowRight)
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 18, height: 18)
+                .foregroundStyle(YapPalette.paper)
+                .offset(x: reduceMotion ? 0 : (animate ? 0 : -34))
+                .opacity(reduceMotion ? 1 : (animate ? 1 : 0.35))
+                .animation(
+                    reduceMotion
+                        ? nil
+                        : .easeInOut(duration: 1.15).repeatForever(autoreverses: false),
+                    value: animate
+                )
         }
         .accessibilityHidden(true)
     }

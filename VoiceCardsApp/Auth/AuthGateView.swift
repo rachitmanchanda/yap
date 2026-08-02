@@ -8,24 +8,15 @@ struct AuthGateView<Content: View>: View {
 
     var body: some View {
         Group {
-            switch model.state {
-            case .loading:
-                YapAtmosphereScreen(atmosphere: .welcome) {
-                    ProgressView()
-                        .controlSize(.large)
-                        .tint(YapPalette.paper)
-                        .accessibilityLabel("Connecting securely")
-                }
-            case .signedIn where hasCompletedOnboarding || model.isBypassed:
-                content()
-            case .signedOut, .signingIn, .signedIn:
-                YapOnboardingFlowView(
-                    authModel: model,
-                    initiallyAuthenticated: model.currentSession != nil
-                ) {
-                    hasCompletedOnboarding = true
-                }
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-uiTestDesignSystemGallery") {
+                YapComponentGallery()
+            } else {
+                authContent
             }
+            #else
+            authContent
+            #endif
         }
         .task {
             hasCompletedOnboarding = AppPreferences.hasCompletedOnboarding
@@ -40,6 +31,28 @@ struct AuthGateView<Content: View>: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(model.errorMessage ?? "")
+        }
+    }
+
+    @ViewBuilder
+    private var authContent: some View {
+        switch model.state {
+        case .loading:
+            YapAtmosphereScreen(atmosphere: .welcome) {
+                ProgressView()
+                    .controlSize(.large)
+                    .tint(YapPalette.paper)
+                    .accessibilityLabel("Connecting securely")
+            }
+        case .signedIn where hasCompletedOnboarding || model.isBypassed:
+            content()
+        case .signedOut, .signingIn, .signedIn:
+            YapOnboardingFlowView(
+                authModel: model,
+                initiallyAuthenticated: model.currentSession != nil
+            ) {
+                hasCompletedOnboarding = true
+            }
         }
     }
 }

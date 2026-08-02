@@ -7,7 +7,6 @@ enum YapOnboardingStep: Int, Equatable {
     case microphone
     case modes
     case keyboard
-    case actionButton
 }
 
 struct YapOnboardingFlowView: View {
@@ -55,12 +54,7 @@ struct YapOnboardingFlowView: View {
             case .keyboard:
                 YapKeyboardSetupScreen(
                     openSettings: openSettings,
-                    continueFlow: { advance(to: .actionButton) }
-                )
-            case .actionButton:
-                YapActionButtonSetupScreen(
-                    setUp: finishAndOpenShortcuts,
-                    skip: finish
+                    continueFlow: finish
                 )
             }
         }
@@ -97,6 +91,7 @@ struct YapOnboardingFlowView: View {
     }
 
     private func advance(to nextStep: YapOnboardingStep) {
+        YapHaptics.selection()
         withAnimation {
             step = nextStep
         }
@@ -104,12 +99,6 @@ struct YapOnboardingFlowView: View {
 
     private func openSettings() {
         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-        UIApplication.shared.open(url)
-    }
-
-    private func finishAndOpenShortcuts() {
-        finish()
-        guard let url = URL(string: "shortcuts://") else { return }
         UIApplication.shared.open(url)
     }
 
@@ -127,7 +116,6 @@ struct YapOnboardingFlowView: View {
             case "microphone": return .microphone
             case "modes": return .modes
             case "keyboard": return .keyboard
-            case "action": return .actionButton
             default: break
             }
         }
@@ -144,70 +132,271 @@ private struct YapWelcomeScreen: View {
 
     var body: some View {
         YapAtmosphereScreen(atmosphere: .welcome, contentRespectsSafeArea: false) {
-            VStack(alignment: .leading, spacing: 0) {
-                Spacer(minLength: 120)
-
-                VStack(alignment: .leading, spacing: 18) {
-                    HStack(alignment: .firstTextBaseline, spacing: 0) {
-                        Text("yap")
-                            .foregroundStyle(YapPalette.paper)
-                        Text(".")
-                            .foregroundStyle(YapPalette.acid)
-                    }
-                    .font(.system(size: 96, weight: .black, design: .rounded))
-                    .tracking(-2.88)
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Yap")
-                    .accessibilityIdentifier("Yap logo")
-                    .onTapGesture {
-                        #if DEBUG
-                        bypassTapCount += 1
-                        if bypassTapCount >= 10 {
-                            bypassTapCount = 0
-                            bypass()
+            GeometryReader { proxy in
+                VStack(alignment: .leading, spacing: 0) {
+                    YapWelcomeMemoryRain()
+                        .frame(height: min(458, proxy.size.height * 0.54))
+                        // The pile still clips horizontally, but dissolves into the pitch instead
+                        // of ending at a sharp exported-frame boundary.
+                        .mask {
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .black, location: 0),
+                                    .init(color: .black, location: 0.80),
+                                    .init(color: .black.opacity(0.82), location: 0.88),
+                                    .init(color: .black.opacity(0.28), location: 0.96),
+                                    .init(color: .clear, location: 1)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
                         }
-                        #endif
-                    }
+                        .overlay(alignment: .bottom) {
+                            Rectangle()
+                                .fill(YapPalette.base.opacity(0.32))
+                                .frame(height: 42)
+                                .blur(radius: 22)
+                                .allowsHitTesting(false)
+                        }
 
-                    Text("say it once.\npaste it anywhere.")
-                        .font(.system(size: 27, weight: .medium, design: .rounded))
-                        .tracking(-0.27)
-                        .lineSpacing(0)
+                    VStack(alignment: .leading, spacing: 0) {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Image("YapMark")
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 64, height: 46)
+                                .foregroundStyle(YapPalette.paper)
+                                .accessibilityLabel("Yap")
+                                .accessibilityIdentifier("Yap logo")
+                                .onTapGesture {
+                                    #if DEBUG
+                                    bypassTapCount += 1
+                                    if bypassTapCount >= 10 {
+                                        bypassTapCount = 0
+                                        bypass()
+                                    }
+                                    #endif
+                                }
 
-                    Text("your clipboard, but it has ears.")
-                        .font(.system(size: 15, weight: .regular, design: .rounded))
-                        .foregroundStyle(YapPalette.paper82)
-                }
-                .padding(.horizontal, 2)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("yappers yap. not type.")
+                                    .font(.system(size: 38, weight: .black, design: .rounded))
+                                    .tracking(-1.14)
+                                    .lineSpacing(0)
 
-                Spacer(minLength: 90)
-
-                VStack(spacing: 14) {
-                    Button(action: signIn) {
-                        Group {
-                            if isSigningIn {
-                                ProgressView()
-                                    .tint(YapPalette.paper)
-                            } else {
-                                Text("sign in with apple")
+                                Text("yap, roast, inform 5x faster.")
+                                    .font(.system(size: 29, weight: .black, design: .rounded))
+                                    .tracking(-0.87)
+                                    .foregroundStyle(YapPalette.paper55)
+                                    .lineSpacing(0)
                             }
+                            .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer(minLength: 18)
+
+                        VStack(spacing: 10) {
+                            Button(action: signIn) {
+                                Group {
+                                    if isSigningIn {
+                                        ProgressView()
+                                            .tint(YapPalette.paper)
+                                    } else {
+                                        Text("continue with apple")
+                                    }
+                                }
+                            }
+                            .buttonStyle(YapDarkButtonStyle())
+                            .disabled(isSigningIn)
+                            .accessibilityIdentifier("onboardingSignInWithApple")
+
+                            YapMetaText(
+                                text: "by continuing you agree to the terms and privacy policy.",
+                                color: YapPalette.paper55
+                            )
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
                         }
                     }
-                    .buttonStyle(YapDarkButtonStyle())
-                    .disabled(isSigningIn)
-                    .accessibilityIdentifier("onboardingSignInWithApple")
-
-                    YapMetaText(
-                        text: "no account. no signup. just talk.",
-                        color: YapPalette.paper82
-                    )
+                    .padding(.horizontal, 22)
+                    .padding(.top, 12)
+                    .padding(.bottom, 12)
+                    // Match the homepage dock: preserve the real home-indicator inset, then add
+                    // Yap's shared comfort spacing so the legal copy never hugs the screen edge.
+                    .safeAreaPadding(.bottom, YapLayout.dockBottomInset)
+                    .frame(maxHeight: .infinity)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-            .padding(.bottom, 34)
         }
     }
+}
+
+/// The cards keep the exact Figma pile at rest, then fall on staggered loops to make Yap's
+/// remembered thoughts feel alive. Reduce Motion freezes the pile instead of removing context.
+private struct YapWelcomeMemoryRain: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var startedAt = Date()
+
+    private let messages = YapWelcomeMessage.samples
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: reduceMotion)) { timeline in
+            GeometryReader { proxy in
+                let elapsed = reduceMotion ? 10 : timeline.date.timeIntervalSince(startedAt)
+                let horizontalScale = proxy.size.width / 393
+                let verticalScale = proxy.size.height / 458
+                let cardScale = min(horizontalScale, 1.08)
+
+                ZStack(alignment: .topLeading) {
+                    ForEach(messages) { message in
+                        let progress = message.settlingProgress(after: elapsed)
+                        let startY = -115 - CGFloat(message.id % 3) * 34
+                        let targetY = message.initialY + 35
+                        let settledFloat = progress >= 0.995
+                            ? sin(elapsed * 0.48 + message.phase * 8) * 3
+                            : 0
+                        let y = (startY + (targetY - startY) * progress + settledFloat) * verticalScale
+                        let x = (message.leading + message.width / 2) * horizontalScale
+                            + sin(elapsed * 0.42 + message.phase * 9) * (progress >= 0.995 ? 4 : 1.5)
+
+                        YapWelcomeMessageCard(message: message)
+                            .frame(width: message.width)
+                            .scaleEffect(cardScale)
+                            .rotationEffect(.degrees(
+                                message.rotation
+                                    + (1 - progress) * message.entryRotation
+                                    + sin(elapsed * 0.35 + message.phase * 7) * (progress >= 0.995 ? 0.7 : 0)
+                            ))
+                            .position(x: x, y: y)
+                            .opacity(message.opacity * min(1, max(0, progress * 2)))
+                    }
+                }
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+        .task(id: startedAt) {
+            guard !reduceMotion else { return }
+            YapHaptics.prepareForLandings()
+
+            // The visual fall is staggered by 60 ms. Mirroring that cadence with light impacts
+            // makes the pile feel as though it is collecting on the glass, not merely animating.
+            var previousLandingTime: TimeInterval = 0
+            for message in messages {
+                let landingTime = message.delay + 0.24
+                let wait = max(0, landingTime - previousLandingTime)
+                try? await Task.sleep(for: .seconds(wait))
+                guard !Task.isCancelled else { return }
+                YapHaptics.landing(intensity: message.landingIntensity)
+                previousLandingTime = landingTime
+            }
+        }
+    }
+}
+
+private struct YapWelcomeMessageCard: View {
+    let message: YapWelcomeMessage
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: message.isAccent ? 2 : 3) {
+            if message.isAccent {
+                Text(message.metadata)
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .tracking(0.24)
+                Text(message.title)
+                    .font(.system(size: 15, weight: .heavy, design: .rounded))
+                    .tracking(-0.15)
+                    .lineLimit(2)
+            } else {
+                HStack(spacing: 8) {
+                    Text(message.title)
+                        .font(.system(size: 15, weight: .heavy, design: .rounded))
+                        .tracking(-0.15)
+                        .lineLimit(2)
+                    Spacer(minLength: 0)
+                    if let dotColor = message.dotColor {
+                        Circle()
+                            .fill(dotColor)
+                            .frame(width: 8, height: 8)
+                    }
+                }
+                Text(message.metadata)
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .tracking(0.24)
+                    .foregroundStyle(YapPalette.paper55)
+            }
+        }
+        .foregroundStyle(message.isAccent ? YapPalette.ink : YapPalette.paper)
+        .padding(.horizontal, message.isAccent ? 18 : 14)
+        .padding(.vertical, message.isAccent ? 12 : 11)
+        .background {
+            if message.isAccent {
+                Capsule()
+                    .fill(YapPalette.acid)
+                    .shadow(color: YapPalette.acid.opacity(0.4), radius: 15, y: 8)
+            } else {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(.black.opacity(0.24))
+                    .background(
+                        .ultraThinMaterial,
+                        in: RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    )
+                    .shadow(color: .black.opacity(0.3), radius: 10, y: 8)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .stroke(.white.opacity(0.5), lineWidth: 1)
+                    }
+            }
+        }
+    }
+}
+
+private struct YapWelcomeMessage: Identifiable {
+    let id: Int
+    let title: String
+    let metadata: String
+    let width: CGFloat
+    let leading: CGFloat
+    let initialY: CGFloat
+    let rotation: Double
+    let opacity: Double
+    let delay: Double
+    let dotColor: Color?
+    var isAccent = false
+
+    var phase: Double {
+        Double((initialY + 76) / 550)
+    }
+
+    var entryRotation: Double {
+        id.isMultiple(of: 2) ? -10 : 10
+    }
+
+    var landingIntensity: CGFloat {
+        isAccent ? 0.68 : 0.22 + CGFloat(opacity) * 0.28
+    }
+
+    func settlingProgress(after elapsed: TimeInterval) -> CGFloat {
+        let normalized = min(1, max(0, (elapsed - delay) / 1.15))
+        guard normalized < 1 else { return 1 }
+        // A damped fall gives each card a small, physical landing without an endless loop.
+        let spring = 1 - exp(-6.4 * normalized) * cos(9.5 * normalized)
+        return CGFloat(min(1.06, spring))
+    }
+
+    static let samples = [
+        YapWelcomeMessage(id: 0, title: "ritika's upi id", metadata: "2d · shared", width: 178, leading: -42, initialY: 40, rotation: 8, opacity: 1, delay: 0.00, dotColor: YapPalette.clay),
+        YapWelcomeMessage(id: 1, title: "rent delay message", metadata: "4h · voice", width: 196, leading: 178, initialY: 2, rotation: -7, opacity: 1, delay: 0.06, dotColor: YapPalette.acid),
+        YapWelcomeMessage(id: 2, title: "kal mat aana", metadata: "yesterday", width: 158, leading: 44, initialY: 105, rotation: -4, opacity: 1, delay: 0.12, dotColor: .orange),
+        YapWelcomeMessage(id: 3, title: "karan's haircut, roasted", metadata: "2d · voice", width: 208, leading: 146, initialY: 150, rotation: 6, opacity: 0.95, delay: 0.18, dotColor: .pink),
+        YapWelcomeMessage(id: 4, title: "wifi at amma's place", metadata: "3d · shared", width: 180, leading: -48, initialY: 168, rotation: -9, opacity: 0.90, delay: 0.24, dotColor: nil),
+        YapWelcomeMessage(id: 5, title: "leave request for monday", metadata: "4h · voice", width: 204, leading: 118, initialY: 239, rotation: -3, opacity: 0.85, delay: 0.30, dotColor: YapPalette.acid),
+        YapWelcomeMessage(id: 6, title: "goa split screenshot", metadata: "5d · shared", width: 172, leading: 1, initialY: 306, rotation: 5, opacity: 0.72, delay: 0.36, dotColor: nil),
+        YapWelcomeMessage(id: 7, title: "landlord follow-up", metadata: "1w · voice", width: 188, leading: 196, initialY: 310, rotation: -8, opacity: 0.60, delay: 0.42, dotColor: YapPalette.clay),
+        YapWelcomeMessage(id: 8, title: "naina's address", metadata: "2w · shared", width: 160, leading: 205, initialY: 430, rotation: 7, opacity: 0.42, delay: 0.48, dotColor: nil),
+        YapWelcomeMessage(id: 9, title: "sharma ji, the rent will be a week late.", metadata: "boss mode", width: 292, leading: 45, initialY: 358, rotation: 4, opacity: 1, delay: 0.56, dotColor: nil, isAccent: true)
+    ]
 }
 
 private struct YapMicrophoneScreen: View {
@@ -216,9 +405,9 @@ private struct YapMicrophoneScreen: View {
     let skip: () -> Void
 
     private let promises = [
-        "audio is transcribed, then thrown away.",
-        "nothing leaves your phone until you save a card.",
-        "no recording indicator surprises — the whole screen turns black when we are listening."
+        "idle audio is discarded on-device and never sent.",
+        "the orange iOS microphone indicator stays visible while Flow is on.",
+        "turn Flow off anytime by opening Yap from its Live Activity."
     ]
 
     var body: some View {
@@ -228,7 +417,7 @@ private struct YapMicrophoneScreen: View {
                     YapStepPill(current: 1)
                     YapOnboardingHeading(text: "let yap\nhear you", size: 40)
                     Text(
-                        "capture only happens in the app, so the mic opens when you press the button — never in the background, never on the keyboard."
+                        "the keyboard never accesses your mic. start Flow once in Yap, then its armed audio session can listen on demand for up to four hours."
                     )
                     .font(.system(size: 15, weight: .regular, design: .rounded))
                     .foregroundStyle(YapPalette.paper82)
@@ -498,85 +687,6 @@ private struct YapKeyboardSetupScreen: View {
 
                     Button("i'll do it later", action: continueFlow)
                         .buttonStyle(YapGhostButtonStyle())
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
-            .padding(.bottom, 2)
-        }
-    }
-}
-
-private struct YapActionButtonSetupScreen: View {
-    let setUp: () -> Void
-    let skip: () -> Void
-
-    var body: some View {
-        YapAtmosphereScreen(atmosphere: .action) {
-            VStack(alignment: .leading, spacing: 0) {
-                VStack(alignment: .leading, spacing: 14) {
-                    YapStepPill(current: 3)
-                    YapOnboardingHeading(text: "one press.\nalready recording.")
-                    Text(
-                        "the whole loop only wins if it is nearly free. so the button skips the app icon, the tap, and the wait for the mic."
-                    )
-                    .font(.system(size: 15, weight: .regular, design: .rounded))
-                    .foregroundStyle(YapPalette.paper82)
-                    .lineSpacing(1)
-                }
-                .padding(.horizontal, 2)
-
-                HStack(spacing: 16) {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(.black.opacity(0.3))
-                        .frame(width: 30, height: 66)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(YapPalette.clay)
-                                .frame(width: 7, height: 44)
-                                .shadow(color: YapPalette.clay.opacity(0.7), radius: 16, x: -2)
-                        }
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(.white.opacity(0.12), lineWidth: 1)
-                        }
-
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("action button → yap")
-                            .font(.system(size: 15, weight: .heavy, design: .rounded))
-                        YapMetaText(
-                            text: "opens straight into a recording. the only control on screen is stop."
-                        )
-                    }
-                }
-                .padding(18)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .yapPanel()
-                .padding(.top, 24)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    YapMetaText(text: "no action button?")
-                    Text(
-                        "add yap to control centre, the lock screen, or back tap. any of them beats opening the app."
-                    )
-                    .font(.system(size: 15, weight: .regular, design: .rounded))
-                    .foregroundStyle(YapPalette.paper82)
-                    .lineSpacing(1)
-                }
-                .padding(.horizontal, 18)
-                .padding(.top, 14)
-                .padding(.bottom, 16)
-                .yapPanel(cornerRadius: 22, depth: .sunk)
-                .padding(.top, 16)
-
-                Spacer(minLength: 18)
-
-                VStack(spacing: 10) {
-                    Button("set up action button", action: setUp)
-                        .buttonStyle(YapPrimaryButtonStyle())
-                    Button("skip for now", action: skip)
-                        .buttonStyle(YapGhostButtonStyle())
-                    YapMetaText(text: "that's everything. go yap.")
                 }
             }
             .padding(.horizontal, 20)

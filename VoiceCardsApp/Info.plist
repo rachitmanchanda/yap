@@ -4,7 +4,7 @@
 <dict>
     <key>CFBundleDevelopmentRegion</key><string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Yap</string>
+    <string>YAP</string>
     <key>CFBundleExecutable</key><string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key><string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
     <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
@@ -17,7 +17,7 @@
     <array>
         <dict>
             <key>CFBundleURLName</key>
-            <string>com.APP.VoiceCards.capture</string>
+            <string>com.rachitmanchanda.yap.beta.capture</string>
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>app</string>
@@ -26,11 +26,11 @@
         </dict>
     </array>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Yap records speech to turn your words into saved cards.</string>
+	<string>YAP transcribes your dictation. When you start YAP Flow, the microphone stays active in the background for up to four hours; idle audio is discarded.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>Yap uses on-device speech recognition when online transcription is unavailable.</string>
+    <string>YAP uses on-device speech recognition when online transcription is unavailable.</string>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>

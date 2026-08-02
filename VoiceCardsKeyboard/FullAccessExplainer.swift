@@ -6,43 +6,49 @@ struct FullAccessExplainer: View {
     let refreshAccess: () -> Void
 
     var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: "lock.shield.fill")
-                .font(.title2)
-                .foregroundStyle(YapKeyboardPalette.acid)
+        VStack(spacing: YapSpacing.small) {
+            Image(YapKeyboardIcon.lock.assetName)
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(width: YapControlMetric.iconLarge, height: YapControlMetric.iconLarge)
+                .foregroundStyle(YapKeyboardPalette.clay)
             Text("allow full access to see your yaps")
-                .font(.system(size: 16, weight: .black, design: .rounded))
+                .font(YapType.sectionTitle)
             Text("It only lets this keyboard read Yap’s private shared storage. It never records audio or sends what you type.")
-                .font(.caption)
+                .font(YapType.caption)
                 .multilineTextAlignment(.center)
-                .foregroundStyle(YapKeyboardPalette.paper.opacity(0.58))
+                .foregroundStyle(YapKeyboardPalette.mutedInk)
             Text("Settings → General → Keyboard → Keyboards → Yap")
-                .font(.caption2.weight(.medium))
+                .font(YapType.metadata)
                 .multilineTextAlignment(.center)
             if fullAccessReported {
                 Text("Full Access is on, but shared storage is unavailable. Switch keyboards once, then check again.")
-                    .font(.caption2)
+                    .font(YapType.metadata)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.orange)
             }
             Button("I enabled it — check again", action: refreshAccess)
-                .font(.system(size: 13, weight: .heavy, design: .rounded))
-                .foregroundStyle(YapKeyboardPalette.ink)
-                .padding(.horizontal, 16)
-                .frame(height: 36)
-                .background(YapKeyboardPalette.acid, in: Capsule())
+                .font(YapType.button)
+                .foregroundStyle(YapKeyboardPalette.onStrongFill)
+                .padding(.horizontal, YapSpacing.regular)
+                .frame(minHeight: YapControlMetric.minimumTouchTarget)
+                .background(YapKeyboardPalette.strongFill, in: Capsule())
 #if DEBUG
             if let diagnostic {
                 Text(diagnostic)
-                    .font(.system(size: 9, design: .monospaced))
+                    .font(.system(.caption2, design: .monospaced))
                     .lineLimit(2)
                     .foregroundStyle(.tertiary)
             }
 #endif
         }
-        .padding()
-        .foregroundStyle(YapKeyboardPalette.paper)
-        .background(.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 20))
-        .overlay(RoundedRectangle(cornerRadius: 20).stroke(.white.opacity(0.18), lineWidth: 1))
+        .padding(YapSpacing.regular)
+        .foregroundStyle(YapKeyboardPalette.ink)
+        .background(YapKeyboardPalette.keyboardPanel, in: RoundedRectangle(cornerRadius: YapRadius.input))
+        .overlay(
+            RoundedRectangle(cornerRadius: YapRadius.input)
+                .stroke(YapKeyboardPalette.outline, lineWidth: 1)
+        )
     }
 }

@@ -229,47 +229,47 @@ settings_for = lambda do |name, configuration|
                {
                  "ASSETCATALOG_COMPILER_APPICON_NAME" => "AppIcon",
                  "CODE_SIGN_ENTITLEMENTS" => "VoiceCardsApp/VoiceCards.entitlements",
-                 "DEVELOPMENT_TEAM" => "6D64M4KBHV",
+                 "DEVELOPMENT_TEAM" => "5W2NHWNTW6",
                  "INFOPLIST_FILE" => "VoiceCardsApp/Info.plist",
-                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.APP.VoiceCards",
+                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.rachitmanchanda.yap.beta",
                  "PRODUCT_NAME" => "VoiceCards"
                }
              when "VoiceCardsKeyboard"
                {
                  "APPLICATION_EXTENSION_API_ONLY" => "YES",
                  "CODE_SIGN_ENTITLEMENTS" => "VoiceCardsKeyboard/VoiceCardsKeyboard.entitlements",
-                 "DEVELOPMENT_TEAM" => "6D64M4KBHV",
+                 "DEVELOPMENT_TEAM" => "5W2NHWNTW6",
                  "INFOPLIST_FILE" => "VoiceCardsKeyboard/Info.plist",
-                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.APP.VoiceCards.Keyboard",
+                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.rachitmanchanda.yap.beta.keyboard",
                  "SKIP_INSTALL" => "YES"
                }
              when "VoiceCardsShare"
                {
                  "APPLICATION_EXTENSION_API_ONLY" => "YES",
                  "CODE_SIGN_ENTITLEMENTS" => "VoiceCardsShare/VoiceCardsShare.entitlements",
-                 "DEVELOPMENT_TEAM" => "6D64M4KBHV",
+                 "DEVELOPMENT_TEAM" => "5W2NHWNTW6",
                  "INFOPLIST_FILE" => "VoiceCardsShare/Info.plist",
-                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.APP.VoiceCards.Share",
+                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.rachitmanchanda.yap.beta.share",
                  "SKIP_INSTALL" => "YES"
                }
              when "VoiceCardsLiveActivity"
                {
                  "APPLICATION_EXTENSION_API_ONLY" => "YES",
                  "INFOPLIST_FILE" => "VoiceCardsLiveActivity/Info.plist",
-                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.APP.VoiceCards.LiveActivity",
+                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.rachitmanchanda.yap.beta.liveactivity",
                  "SKIP_INSTALL" => "YES"
                }
              when "VoiceCardsTests"
                {
                  "BUNDLE_LOADER" => "$(TEST_HOST)",
                  "GENERATE_INFOPLIST_FILE" => "YES",
-                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.APP.VoiceCards.Tests",
+                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.rachitmanchanda.yap.beta.tests",
                  "TEST_HOST" => "$(BUILT_PRODUCTS_DIR)/VoiceCards.app/VoiceCards"
                }
              else
                {
                  "GENERATE_INFOPLIST_FILE" => "YES",
-                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.APP.VoiceCards.UITests",
+                 "PRODUCT_BUNDLE_IDENTIFIER" => "com.rachitmanchanda.yap.beta.uitests",
                  "TEST_TARGET_NAME" => "VoiceCardsApp"
                }
              end

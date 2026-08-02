@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "·" : {
+
+    },
+    "%@" : {
+
+    },
     "%@ %@" : {
       "localizations" : {
         "en" : {
@@ -20,46 +26,157 @@
     "90 days" : {
 
     },
-    "By continuing, you agree to the Terms and Privacy Policy." : {
+    "add a term" : {
 
     },
-    "Clipboard history stays on this device. iOS may ask before Yap reads content copied in another app." : {
+    "build it with your ai" : {
 
     },
-    "Custom keyboards cannot access the microphone. Tap “Speak in Yap” to open the app, record there, then return and paste the new card." : {
+    "clipboard history stays local. iOS may ask before Yap reads content copied in another app." : {
 
     },
-    "Forever" : {
+    "continue with apple" : {
 
     },
-    "Full Access lets the keyboard read cards from the private App Group shared with Yap. The keyboard does not record audio, monitor typing, or send what you type." : {
+    "copy" : {
 
     },
-    "If iOS shows another keyboard, hold the Globe key and choose Yap again." : {
+    "copy & save" : {
 
     },
-    "Measured from the actual recorder, transcript, rewrite, and keyboard insertion events." : {
+    "default mode" : {
 
     },
-    "Mic is on" : {
+    "Delete" : {
 
     },
-    "None" : {
+    "forever" : {
 
     },
-    "Return to the app where you were typing. Yap will keep listening for up to 3 minutes." : {
+    "forget everything" : {
 
     },
-    "Sign in once to securely use Yap transcription and rewrite services." : {
+    "full access is how the keyboard reads the cards you saved. it is not how we read what you type — yap has no keys, so there is nothing to log." : {
 
     },
-    "Swipe right along the bottom edge" : {
+    "just now · voice" : {
 
     },
-    "Why Full Access?" : {
+    "keep history" : {
 
     },
-    "Your words, ready anywhere" : {
+    "listening" : {
+
+    },
+    "live status is unavailable, but the mic is still on" : {
+
+    },
+    "measured from recorder start through transcription, rewrite and insertion." : {
+
+    },
+    "name" : {
+
+    },
+    "names and phrases Yap has learned" : {
+
+    },
+    "Names are remembered after one saved use. Frequent phrases become hints after they recur." : {
+
+    },
+    "none" : {
+
+    },
+    "paste result" : {
+
+    },
+    "phrase" : {
+
+    },
+    "preview" : {
+
+    },
+    "rewrite modes" : {
+
+    },
+    "rewriting that…" : {
+
+    },
+    "save to memory" : {
+
+    },
+    "set up the Yap keyboard" : {
+
+    },
+    "sign out" : {
+
+    },
+    "step %@ of 3" : {
+
+    },
+    "Swipe back and tap Yap whenever you want to speak." : {
+
+    },
+    "swipe right along the bottom edge to go back" : {
+
+    },
+    "tap a mode to re-run · export the before/after" : {
+
+    },
+    "tap to stop" : {
+
+    },
+    "the keyboard never accesses your mic. start Flow once in Yap, then its armed audio session can listen on demand for up to four hours." : {
+
+    },
+    "this is the annoying part and we can't do it for you. four taps in settings, once." : {
+
+    },
+    "This permanently deletes your Yap account and erases your yaps, clipboard history, custom modes, and learned terms. This can’t be undone.\n\nYou can also remove Yap under Apple Account > Sign in with Apple in Settings." : {
+
+    },
+    "turning live status on…" : {
+
+    },
+    "turning the mic on…" : {
+
+    },
+    "used %@×" : {
+
+    },
+    "we’ll copy a prompt. paste it into your preferred app, then paste its final instruction above." : {
+
+    },
+    "Yap Flow is on" : {
+
+    },
+    "Yap is listening for your language" : {
+
+    },
+    "Yap memory" : {
+
+    },
+    "Yap stores these spellings on this device and uses them only as context for your transcription and cleanup. They are never sent as analytics." : {
+
+    },
+    "Yap will prioritize this exact spelling while transcribing and cleaning up your speech." : {
+
+    },
+    "Yap will stop using every learned name and phrase. Your saved yaps will not be deleted." : {
+
+    },
+    "yap, roast, inform 5x faster." : {
+
+    },
+    "yappers yap. not type." : {
+
+    },
+    "yaps" : {
+
+    },
+    "yo tell the landlord i'm gonna be late with the rent this month, like a week late, sorry" : {
+
+    },
+    "you said" : {
 
     }
   },

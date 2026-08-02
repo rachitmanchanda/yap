@@ -172,6 +172,18 @@ final class SupabaseAuthService: NSObject, ASWebAuthenticationPresentationContex
         try validate(response: response, data: data)
     }
 
+    /// Account deletion stays on the server because only Supabase's service role may remove users.
+    func deleteAccount(_ session: AuthSession) async throws {
+        var request = URLRequest(url: SupabaseConfiguration.functionURL(named: "delete-account"))
+        request.httpMethod = "POST"
+        request.setValue(SupabaseConfiguration.publishableKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = Data("{}".utf8)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        try validate(response: response, data: data)
+    }
+
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
         let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
         return scenes.flatMap(\.windows).first(where: \.isKeyWindow) ?? ASPresentationAnchor()

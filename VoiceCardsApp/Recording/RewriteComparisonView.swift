@@ -8,11 +8,11 @@ struct RewriteComparisonView: View {
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: 12) {
+            HStack(alignment: .top, spacing: YapSpacing.compact) {
                 panel(title: originalTitle, text: original)
                 panel(title: rewriteTitle, text: rewrite)
             }
-            VStack(spacing: 12) {
+            VStack(spacing: YapSpacing.compact) {
                 panel(title: originalTitle, text: original)
                 panel(title: rewriteTitle, text: rewrite)
             }
@@ -20,17 +20,17 @@ struct RewriteComparisonView: View {
     }
 
     private func panel(title: String, text: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: YapSpacing.small) {
             Text(title.lowercased())
-                .font(.system(size: 12, weight: .heavy, design: .rounded))
+                .font(YapType.label)
                 .foregroundStyle(YapPalette.acid)
             Text(text)
-                .font(.system(size: 16, weight: .medium, design: .rounded))
+                .font(YapType.body)
                 .lineSpacing(4)
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(16)
-        .yapPanel(cornerRadius: 20)
+        .padding(YapSpacing.regular)
+        .yapPanel(cornerRadius: YapRadius.card)
     }
 }

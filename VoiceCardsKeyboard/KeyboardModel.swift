@@ -20,6 +20,7 @@ final class KeyboardModel {
     private let clipboardAssets = ClipboardAssetStore()
     private var sharedContainer: ModelContainer?
     private var clipboardCaptureService: ClipboardCaptureService?
+    private var didInitialLoad = false
 
     init() {}
 
@@ -28,6 +29,7 @@ final class KeyboardModel {
     var pinned: [Card] { cards.filter(\.pinned) }
     var recentClipboard: [ClipboardItem] { Array(clipboardItems.prefix(12)) }
     var pinnedClipboard: [ClipboardItem] { clipboardItems.filter(\.pinned) }
+    var isFlowReady: Bool { dictationSession?.phase == .readyForCapture }
 
     var searchResults: [Card] {
         guard let query = query.nilIfBlank else { return [] }
@@ -47,7 +49,13 @@ final class KeyboardModel {
     }
 
     func updateAccess(_ hasFullAccess: Bool) {
+        let accessChanged = self.hasFullAccess != hasFullAccess
         self.hasFullAccess = hasFullAccess
+        guard !didInitialLoad || accessChanged else {
+            refreshDictationSession()
+            return
+        }
+        didInitialLoad = true
         reload()
     }
 
@@ -123,7 +131,26 @@ final class KeyboardModel {
     }
 
     func refreshDictationSession() {
-        dictationSession = currentDictationSession()
+        let previousSession = dictationSession
+        let refreshedSession = currentDictationSession()
+        dictationSession = refreshedSession
+
+        // A keyboard extension can stay resident while the user creates a custom mode in Yap.
+        // Refresh once when the picker arrives so it reflects the latest shared mode library
+        // without reloading SwiftData on every 250 ms dictation poll.
+        if refreshedSession?.phase == .awaitingMode,
+           previousSession?.phase != .awaitingMode || previousSession?.id != refreshedSession?.id {
+            reloadModesForPicker()
+        }
+    }
+
+    private func reloadModesForPicker() {
+        do {
+            let container = try retainedContainer()
+            modes = try ModeRepository(context: container.mainContext).all()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     /// Extension processes are frequently killed mid-handoff, so abandoned sessions must not
@@ -133,26 +160,40 @@ final class KeyboardModel {
 
         // Cancellation is a command for the app, not a screen the keyboard should wait on.
         // Keep the command on disk for the app to consume, but recover the keyboard immediately.
-        if session.phase == .cancelRequested {
+        if session.phase == .cancelRequested || session.phase == .endFlowRequested {
             return nil
         }
 
         let age = now.timeIntervalSince(session.updatedAt)
         let isStale: Bool
         switch session.phase {
-        case .consumed, .cancelRequested:
+        case .consumed:
+            // Give the armed host process time to acknowledge insertion and return Flow to ready.
+            isStale = age > 3
+        case .cancelRequested:
             isStale = true
+        case .endFlowRequested:
+            isStale = true
+        case .readyForCapture:
+            // The armed host app writes a heartbeat while its audio engine is alive. A stale
+            // marker must fall back to the normal app handoff instead of pretending Flow is on.
+            isStale = (session.flowExpiresAt.map { $0 <= now } ?? false) || age > 3
+        case .startRequested:
+            // If the armed app process was evicted, recover to the normal foreground handoff.
+            isStale = age > 4
         case .launching:
             // A normal handoff reaches `.recording` almost immediately. Recover quickly if iOS
             // declines to foreground the app instead of trapping the keyboard on a spinner.
             isStale = age > 6
-        case .recording, .stopRequested, .transcribing,
+        case .recording, .stopRequested, .transcribing, .enhancing,
              .awaitingMode, .insertRequested, .modeRequested, .rewriting:
             isStale = age > 4 * 60
         case .completed:
             isStale = age > 10 * 60
         case .failed:
             isStale = age > 30
+        case .flowExpired:
+            isStale = age > 4 * 60 * 60
         }
 
         if isStale {
@@ -166,6 +207,21 @@ final class KeyboardModel {
         guard let session = dictationSession else { return }
         dictationBridge.update(id: session.id, phase: .stopRequested)
         reload()
+    }
+
+    func requestStart() {
+        guard let session = dictationSession, session.phase == .readyForCapture else { return }
+        dictationBridge.update(id: session.id, phase: .startRequested)
+        refreshDictationSession()
+    }
+
+    func failHandoff(sessionID: UUID) {
+        dictationBridge.update(
+            id: sessionID,
+            phase: .failed,
+            error: "Yap could not open. Tap the orange Yap button to try again."
+        )
+        refreshDictationSession()
     }
 
     func cancelDictation() {

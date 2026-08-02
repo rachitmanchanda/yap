@@ -26,9 +26,9 @@ Deno.serve(async (request) => {
     if (requestedProvider !== "sarvam" && requestedProvider !== "whisper") {
       return json({ error: "provider must be sarvam or whisper." }, 400)
     }
-    const requestedMode = String(incoming.get("mode") ?? "translit")
+    const requestedMode = String(incoming.get("mode") ?? "codemix")
     const supportedModes = new Set(["translit", "codemix", "transcribe", "verbatim", "translate"])
-    const mode = supportedModes.has(requestedMode) ? requestedMode : "translit"
+    const mode = supportedModes.has(requestedMode) ? requestedMode : "codemix"
     const vocabulary = String(incoming.get("vocabulary") ?? "").trim()
     const providerBody = new FormData()
     providerBody.append("file", audio, audio.name || "speech.m4a")

@@ -19,6 +19,17 @@ struct RootView: View {
             )
         }
         .tint(YapPalette.acid)
+        .overlay {
+            if appModel.isCapturePresented {
+                // The recording sheet should feel modal while retaining a faint sense of place.
+                Color.black
+                    .opacity(0.9)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeOut(duration: 0.2), value: appModel.isCapturePresented)
         .sheet(isPresented: $appModel.isCapturePresented) {
             CaptureView(
                 model: RecordingSessionModel.production(
@@ -40,6 +51,9 @@ struct RootView: View {
         }
         .task {
             #if DEBUG
+            if shouldShowUITestEnhancementProgress {
+                appModel.presentCapture(autoStart: false)
+            }
             if shouldShowUITestHandoffCoach,
                !didPrepareUITestHandoff {
                 didPrepareUITestHandoff = true
@@ -99,6 +113,16 @@ struct RootView: View {
         } message: {
             Text(appModel.startupError ?? "")
         }
+        #if DEBUG
+        .overlay {
+            if shouldShowDesignSystemGallery {
+                YapComponentGallery()
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                    .zIndex(100)
+            }
+        }
+        #endif
     }
 
     private func presentPendingCaptureIfNeeded() {
@@ -112,15 +136,6 @@ struct RootView: View {
             return
         }
 
-        // Retained for CaptureThoughtIntent, which launches without a keyboard session.
-        guard AppPreferences.shouldStartCapture else { return }
-        let keyboardSessionID = AppPreferences.pendingKeyboardSessionID
-        AppPreferences.shouldStartCapture = false
-        AppPreferences.pendingKeyboardSessionID = nil
-        appModel.presentCapture(
-            autoStart: true,
-            keyboardSessionID: keyboardSessionID
-        )
     }
 
     private var isUITesting: Bool {
@@ -131,5 +146,13 @@ struct RootView: View {
     private var shouldShowUITestHandoffCoach: Bool {
         ProcessInfo.processInfo.arguments.contains("-uiTestKeyboardHandoffCoach")
             || ProcessInfo.processInfo.environment["YAP_UI_TEST_KEYBOARD_HANDOFF"] == "1"
+    }
+
+    private var shouldShowUITestEnhancementProgress: Bool {
+        ProcessInfo.processInfo.arguments.contains("-uiTestEnhancementProgress")
+    }
+
+    private var shouldShowDesignSystemGallery: Bool {
+        ProcessInfo.processInfo.arguments.contains("-uiTestDesignSystemGallery")
     }
 }

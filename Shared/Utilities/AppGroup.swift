@@ -1,7 +1,7 @@
 import Foundation
 
 enum AppGroup {
-    static let identifier = "group.com.APP.shared"
+    static let identifier = "group.com.rachitmanchanda.yap.beta"
     static let storeFilename = "VoiceCards.sqlite"
     static let audioDirectoryName = "PendingAudio"
 
@@ -25,6 +25,6 @@ enum AppGroupError: LocalizedError {
     case containerUnavailable
 
     var errorDescription: String? {
-        "The shared App Group is unavailable. Check signing and the group.com.APP.shared entitlement."
+        "The shared App Group is unavailable. Check signing and the group.com.rachitmanchanda.yap.beta entitlement."
     }
 }
