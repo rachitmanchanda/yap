@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "datasets": {
+    "mucs-hindi-english-test": {
+      "kind": "speech",
+      "sourcePage": "https://www.openslr.org/104/",
+      "url": "https://www.openslr.org/resources/104/Hindi-English_test.tar.gz",
+      "version": "OpenSLR-104-2021-09-15",
+      "license": "CC BY-SA 4.0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "licenseStatus": "verified",
+      "sha256": "93e358b3bf8233a897fcd353c1f4f98fdda6b8c01b7eed17a70c7dd26e984b37",
+      "cachePath": "downloads/Hindi-English_test.tar.gz"
+    },
+    "hinge": {
+      "kind": "text",
+      "sourcePage": "https://huggingface.co/datasets/LingoIITGN/HinGE",
+      "url": "https://huggingface.co/datasets/LingoIITGN/HinGE/resolve/main/HinGE.csv",
+      "version": "download-verified-2026-07-27",
+      "license": "CC BY 4.0",
+      "licenseURL": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseStatus": "verified",
+      "sha256": "dcfaf37ca9d7528e27da7be6b0cfffafb8bbe7825fe4da45077b96236cd9c9c3",
+      "cachePath": "downloads/HinGE.csv"
+    },
+    "hinglishnorm": {
+      "kind": "text",
+      "sourcePage": "https://github.com/piyushmakhija5/hinglishNorm",
+      "url": "https://raw.githubusercontent.com/piyushmakhija5/hinglishNorm/master/dataset/hinglishNorm_testSet.json",
+      "version": "download-verified-2026-07-27",
+      "license": "BY-NC-SA (as indicated by upstream repository)",
+      "licenseStatus": "evaluation-only",
+      "sha256": "2d962a94192ea74bce7b577e1c03d5e8c60c495e6a1f3e7588277bed08baa5d8",
+      "cachePath": "downloads/hinglishNorm_testSet.json"
+    },
+    "l3cube-hinglid": {
+      "kind": "text",
+      "sourcePage": "https://github.com/l3cube-pune/code-mixed-nlp",
+      "url": "https://raw.githubusercontent.com/l3cube-pune/code-mixed-nlp/main/L3Cube-HingLID/test.txt",
+      "version": "download-verified-2026-07-27",
+      "license": "Upstream repository does not state a clear dataset license",
+      "licenseStatus": "review-required",
+      "sha256": "6007c2999e97e946ebf3b2ca49ddff16fda0a29e7b6c9ca28d0d006329f70303",
+      "cachePath": "downloads/L3Cube-HingLID-test.txt"
+    },
+    "iitg-hingcos": {
+      "kind": "speech",
+      "sourcePage": "https://www.iitg.ac.in/eee/emstlab/HingCoS_Database/HingCoS.html",
+      "version": "not-imported",
+      "license": "Requires corpus request and terms confirmation",
+      "licenseStatus": "request-required",
+      "sha256": null,
+      "cachePath": "downloads/iitg-hingcos-not-authorized"
+    }
+  }
+}
