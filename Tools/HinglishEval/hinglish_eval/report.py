@@ -12,6 +12,7 @@ from .metrics import (
     entity_accuracy,
     error_counts,
     exact_send,
+    formatting_decisions,
     preserves_roman_script,
     switch_boundary_accuracy,
     tokenize,
@@ -36,6 +37,9 @@ def score_item(
     correct_switches, switch_total = switch_boundary_accuracy(
         item.reference, pipeline.final_text, item.switch_indexes
     )
+    format_correct, list_correct, paragraphs_correct = formatting_decisions(
+        item.reference, pipeline.final_text
+    )
     return {
         "id": item.id,
         "file": str(item.file),
@@ -54,6 +58,9 @@ def score_item(
         "rawEdits": raw_edits,
         "finalEdits": final_edits,
         "sendWithoutEdit": exact_send(item.reference, pipeline.final_text),
+        "formatStructureCorrect": format_correct,
+        "listDecisionCorrect": list_correct,
+        "paragraphDecisionCorrect": paragraphs_correct,
         "romanScriptPreserved": preserves_roman_script(item.reference, pipeline.final_text),
         "entityCorrect": correct_entities,
         "entityTotal": entity_total,
@@ -107,6 +114,18 @@ def _aggregate(rows: Iterable[dict[str, Any]]) -> dict[str, Any]:
         "correctionBurden": final_errors / reference_words if reference_words else None,
         "sendWithoutEditRate": (
             sum(bool(row["sendWithoutEdit"]) for row in successes) / len(successes)
+            if successes else None
+        ),
+        "formatStructureAccuracy": (
+            sum(bool(row["formatStructureCorrect"]) for row in successes) / len(successes)
+            if successes else None
+        ),
+        "listDecisionAccuracy": (
+            sum(bool(row["listDecisionCorrect"]) for row in successes) / len(successes)
+            if successes else None
+        ),
+        "paragraphDecisionAccuracy": (
+            sum(bool(row["paragraphDecisionCorrect"]) for row in successes) / len(successes)
             if successes else None
         ),
         "entityAccuracy": (
@@ -217,15 +236,19 @@ def _percent(value: float | None) -> str:
 
 def _system_table(lines: list[str], summaries: dict[str, Any]) -> None:
     lines.extend([
-        "| System | N | Send without edit | Correction burden | Raw WER | Entity accuracy | Switch accuracy |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "| System | N | Send without edit | Correction burden | Format | List decision | Paragraph decision | Raw WER | Entity accuracy | Switch accuracy |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ])
     if not summaries:
-        lines.append("| No scored rows | 0 | n/a | n/a | n/a | n/a | n/a |")
+        lines.append("| No scored rows | 0 | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a |")
     for name, summary in summaries.items():
         lines.append(
             f"| {name} | {summary['successful']} | {_percent(summary['sendWithoutEditRate'])} | "
-            f"{_percent(summary['correctionBurden'])} | {_percent(summary['rawWer'])} | "
+            f"{_percent(summary['correctionBurden'])} | "
+            f"{_percent(summary['formatStructureAccuracy'])} | "
+            f"{_percent(summary['listDecisionAccuracy'])} | "
+            f"{_percent(summary['paragraphDecisionAccuracy'])} | "
+            f"{_percent(summary['rawWer'])} | "
             f"{_percent(summary['entityAccuracy'])} | {_percent(summary['switchBoundaryAccuracy'])} |"
         )
 
@@ -287,15 +310,19 @@ def markdown(report: dict[str, Any]) -> str:
 
 def _category_table(lines: list[str], summaries: dict[str, Any]) -> None:
     lines.extend([
-        "| Category | N | Send without edit | Correction burden | Raw WER |",
-        "|---|---:|---:|---:|---:|",
+        "| Category | N | Send without edit | Correction burden | Format | List decision | Paragraph decision | Raw WER |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
     ])
     if not summaries:
-        lines.append("| No scored rows | 0 | n/a | n/a | n/a |")
+        lines.append("| No scored rows | 0 | n/a | n/a | n/a | n/a | n/a | n/a |")
     for name, summary in summaries.items():
         lines.append(
             f"| {name} | {summary['successful']} | {_percent(summary['sendWithoutEditRate'])} | "
-            f"{_percent(summary['correctionBurden'])} | {_percent(summary['rawWer'])} |"
+            f"{_percent(summary['correctionBurden'])} | "
+            f"{_percent(summary['formatStructureAccuracy'])} | "
+            f"{_percent(summary['listDecisionAccuracy'])} | "
+            f"{_percent(summary['paragraphDecisionAccuracy'])} | "
+            f"{_percent(summary['rawWer'])} |"
         )
 
 

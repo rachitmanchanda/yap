@@ -164,6 +164,12 @@ results cannot make the private gate pass.
 
 Do not mix these text rows into the real-speech launch gate.
 
+Reports also score formatting structure, list decisions and paragraph decisions. These
+metrics compare the shape of the final output with the human reference without counting
+the same wording edits twice. Formatting scores are meaningful only when the reference
+was deliberately annotated with the paragraphs and bullets the user would actually send;
+never generate those references with an LLM.
+
 ## Sources and rights
 
 - [MUCS / OpenSLR 104](https://www.openslr.org/104/) — CC BY-SA 4.0

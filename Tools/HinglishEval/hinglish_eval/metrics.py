@@ -10,6 +10,7 @@ from typing import Sequence
 
 TOKEN_PATTERN = re.compile(r"[^\W_]+(?:['’][^\W_]+)*", re.UNICODE)
 DEVANAGARI_PATTERN = re.compile(r"[\u0900-\u097f]")
+BULLET_PATTERN = re.compile(r"^\s*[-•]\s+\S")
 
 
 def normalize_text(text: str) -> str:
@@ -86,6 +87,36 @@ def exact_send(reference: str, hypothesis: str) -> bool:
         return " ".join(unicodedata.normalize("NFKC", text).split())
 
     return sendable(reference) == sendable(hypothesis)
+
+
+def formatting_signature(text: str) -> tuple[str, ...]:
+    """Describe paragraphs and bullet rows without scoring their wording twice."""
+    normalized = unicodedata.normalize("NFKC", text).replace("\r\n", "\n").replace("\r", "\n")
+    signature: list[str] = []
+    pending_paragraph_break = False
+    for raw_line in normalized.split("\n"):
+        line = raw_line.strip()
+        if not line:
+            if signature:
+                pending_paragraph_break = True
+            continue
+        if pending_paragraph_break and signature and signature[-1] != "paragraph-break":
+            signature.append("paragraph-break")
+        signature.append("bullet" if BULLET_PATTERN.match(line) else "prose")
+        pending_paragraph_break = False
+    return tuple(signature)
+
+
+def formatting_decisions(reference: str, hypothesis: str) -> tuple[bool, bool, bool]:
+    """Score overall structure plus list and paragraph decisions independently."""
+    reference_signature = formatting_signature(reference)
+    hypothesis_signature = formatting_signature(hypothesis)
+    list_correct = reference_signature.count("bullet") == hypothesis_signature.count("bullet")
+    paragraphs_correct = (
+        reference_signature.count("paragraph-break")
+        == hypothesis_signature.count("paragraph-break")
+    )
+    return reference_signature == hypothesis_signature, list_correct, paragraphs_correct
 
 
 def preserves_roman_script(reference: str, hypothesis: str) -> bool:

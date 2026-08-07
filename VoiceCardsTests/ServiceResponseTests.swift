@@ -19,13 +19,28 @@ final class ServiceResponseTests: XCTestCase {
 
     func testEnhancementPromptDoesNotInventExpressivePunctuation() {
         let prompt = TranscriptEnhancementPrompt.system(knownTerms: "")
-        XCTAssertTrue(prompt.contains("Never introduce an exclamation mark"))
-        XCTAssertTrue(prompt.contains("keep the result lowercase"))
-        XCTAssertTrue(prompt.contains("do not add a final full stop"))
+        XCTAssertTrue(prompt.contains("Never add an exclamation mark"))
+        XCTAssertTrue(prompt.contains("including lowercase i"))
+        XCTAssertTrue(prompt.contains("Never add terminal punctuation"))
         XCTAssertTrue(prompt.contains("aadat lag gayi"))
-        XCTAssertTrue(prompt.contains("final output must use Latin script throughout"))
-        XCTAssertTrue(prompt.contains("token-by-token quality check"))
+        XCTAssertTrue(prompt.contains("Output Latin script only"))
         XCTAssertTrue(prompt.contains("mam'mi"))
+        XCTAssertTrue(prompt.contains("Hinglish signals include do cheezein"))
+        XCTAssertTrue(prompt.contains("preserve grantiyan rather than changing it to gland"))
+        XCTAssertTrue(prompt.contains("normalization is not cleanup"))
+        XCTAssertTrue(prompt.contains("Phir, uske baad, ek toh"))
+        XCTAssertTrue(prompt.contains("recording-chunk boundary"))
+        XCTAssertTrue(prompt.contains("naya paragraph"))
+        XCTAssertTrue(prompt.contains("A list needs at least two genuine items"))
+        XCTAssertTrue(prompt.contains("When uncertain, use prose"))
+        XCTAssertTrue(prompt.contains("Never add, remove, or change the meaning"))
+    }
+
+    func testEnhancementPromptInjectsLearnedTermsAsConservativeHints() {
+        let prompt = TranscriptEnhancementPrompt.system(knownTerms: "Ritika, Stola")
+        XCTAssertTrue(prompt.contains("Ritika, Stola"))
+        XCTAssertTrue(prompt.contains("strong phonetic match"))
+        XCTAssertTrue(prompt.contains("Never insert a merely similar term"))
     }
 
     func testFallbackUsesOfflineWhenOnlineFails() async throws {
@@ -69,6 +84,31 @@ final class ServiceResponseTests: XCTestCase {
 
     func testRomanHinglishUsesCodeMixRecognitionBeforeCleanup() {
         XCTAssertEqual(TranscriptionOutputStyle.romanHinglish.sarvamMode, "codemix")
+    }
+
+    func testStreamingTranscriptMergerPreservesOrderedHinglishContext() {
+        let result = StreamingTranscriptMerger.merge([
+            "i was thinking ki kal",
+            "hum pitch deck finish kar sakte hain",
+            "and then send it to Rachit"
+        ])
+
+        XCTAssertEqual(
+            result,
+            "i was thinking ki kal hum pitch deck finish kar sakte hain and then send it to Rachit"
+        )
+    }
+
+    func testStreamingTranscriptMergerRemovesReconnectOverlap() {
+        let result = StreamingTranscriptMerger.merge([
+            "mujhe lagta hai pitch deck kal ready ho jayegi",
+            "pitch deck kal ready ho jayegi, phir papa ko bhej dena"
+        ])
+
+        XCTAssertEqual(
+            result,
+            "mujhe lagta hai pitch deck kal ready ho jayegi phir papa ko bhej dena"
+        )
     }
 
     func testQualityGateRetriesPhoneticApostropheArtifacts() {

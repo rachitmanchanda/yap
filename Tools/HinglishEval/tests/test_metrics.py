@@ -4,6 +4,8 @@ from hinglish_eval.metrics import (
     entity_accuracy,
     error_rate,
     exact_send,
+    formatting_decisions,
+    formatting_signature,
     normalize_text,
     preserves_roman_script,
     switch_boundary_accuracy,
@@ -33,6 +35,25 @@ class MetricsTests(unittest.TestCase):
             (3, 3),
         )
         self.assertEqual(entity_accuracy(["Hauz Khas"], "Hauz mein Khas jagah"), (0, 1))
+
+    def test_formatting_signature_tracks_bullets_and_paragraphs(self) -> None:
+        text = "three things:\n- deck\n- call Ritika\n\nfinish by friday"
+        self.assertEqual(
+            formatting_signature(text),
+            ("prose", "bullet", "bullet", "paragraph-break", "prose"),
+        )
+
+    def test_formatting_decisions_reject_false_list_and_paragraph_changes(self) -> None:
+        reference = "kal teen cheezein:\n- deck\n- call Ritika"
+        self.assertEqual(formatting_decisions(reference, reference), (True, True, True))
+        self.assertEqual(
+            formatting_decisions(reference, "kal teen cheezein: deck aur call Ritika"),
+            (False, False, True),
+        )
+        self.assertEqual(
+            formatting_decisions("kal aana\n\nphir baat karenge", "kal aana phir baat karenge"),
+            (False, True, False),
+        )
 
     def test_switch_boundary_requires_both_adjacent_words(self) -> None:
         reference = "kal meeting cancel kar do"
